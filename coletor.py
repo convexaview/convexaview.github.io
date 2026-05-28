@@ -312,80 +312,126 @@ def coletar_noticias():
             unicas.append(n)
     return unicas
 
+# ==================== NOMES COMPLETOS BR ====================
+NOMES_BR = {
+    'PETR4':'Petrobras PN','PETR3':'Petrobras ON','PRIO3':'PetroRio',
+    'RECV3':'Recôncavo','CSAN3':'Cosan','UGPA3':'Ultrapar','VBBR3':'Vibra Energia','BRAP4':'Bradespar',
+    'VALE3':'Vale','CSNA3':'CSN','GGBR4':'Gerdau PN','USIM5':'Usiminas','CMIN3':'CSN Mineração','GOAU4':'Metalúrgica Gerdau',
+    'ITUB4':'Itaú Unibanco PN','ITUB3':'Itaú Unibanco ON','BBDC4':'Bradesco PN','BBDC3':'Bradesco ON',
+    'BBAS3':'Banco do Brasil','SANB11':'Santander BR','BPAC11':'BTG Pactual','BRSR6':'Banrisul','BMGB4':'Banco BMG',
+    'B3SA3':'B3','CIEL3':'Cielo','IRBR3':'IRB Brasil','TRAD3':'Tradecorp','BBSE3':'BB Seguridade','PSSA3':'Porto Seguro',
+    'ELET3':'Eletrobras ON','ELET6':'Eletrobras PNB','CPFE3':'CPFL Energia','ENGI11':'Energisa',
+    'EGIE3':'Engie Brasil','TAEE11':'Taesa','ENEV3':'Eneva','CMIG4':'Cemig PN',
+    'AESB3':'AES Brasil','NEOE3':'Neoenergia','ALUP11':'Alupar','EQTL3':'Equatorial Energia',
+    'SBSP3':'Sabesp','CSMG3':'Copasa',
+    'VIVT3':'Vivo (Telefônica)','TIMS3':'TIM',
+    'MGLU3':'Magazine Luiza','LREN3':'Lojas Renner','SOMA3':'Grupo Soma','ARZZ3':'Arezzo',
+    'NTCO3':'Grupo Boticário','AMAR3':'Marisa','CEAB3':'C&A','GMAT3':'Grupo Mateus','PETZ3':'Petz','SBFG3':'SBF Group (Centauro)',
+    'ABEV3':'Ambev',
+    'JBSS3':'JBS','MRFG3':'Marfrig','BEEF3':'Minerva Foods','BRFS3':'BRF',
+    'SLCE3':'SLC Agrícola','AGRO3':'Brasilagro','SMTO3':'São Martinho','TTEN3':'Terra Santa Agro',
+    'RDOR3':'Rede D\'Or','HAPV3':'Hapvida','FLRY3':'Fleury','DASA3':'Dasa','RADL3':'Raia Drogasil','ODPV3':'Odontoprev',
+    'CYRE3':'Cyrela','MRVE3':'MRV Engenharia','EZTC3':'EZTEC','JHSF3':'JHSF','MDNE3':'Modenese','DIRR3':'Direcional','TEND3':'Tenda','LAVV3':'Lavvi',
+    'MULT3':'Multiplan','IGTI11':'Iguatemi',
+    'RAIL3':'Rumo','ECOR3':'Ecorodovias','POMO4':'Marcopolo','TGMA3':'Tegma','LOGN3':'Log-In',
+    'EMBR3':'Embraer',
+    'RENT3':'Localiza','MOVI3':'Movida','HBSA3':'Hidrovias do Brasil',
+    'SUZB3':'Suzano','KLBN11':'Klabin',
+    'TOTS3':'Totvs','LWSA3':'Locaweb','CASH3':'Méliuz','INTB3':'Intelbras','MLAS3':'Multilaser',
+    'COGN3':'Cogna','YDUQ3':'Yduqs','SEER3':'SER Educacional',
+    'WEGE3':'WEG','RAIZ4':'Raízen',
+}
+
+NOMES_FII = {
+    'HGLG11':'CGHG Logística','XPLG11':'XP Log','VILG11':'Vinci Logística','BRCO11':'Bresco Logística',
+    'GLOG11':'Golgi Log','ALZR11':'Alianza Trust','LVBI11':'LivBras','GGRC11':'GGR Covepi','PATL11':'Pátria Logística',
+    'BTLG11':'BTG Logística','VGIP11':'Valora CRI','SDIL11':'SDI Logística','TRXF11':'TRX Real Estate','JRDM11':'Shopping Jardim Sul',
+    'VISC11':'Vinci Shopping Centers','XPML11':'XP Malls','HSML11':'HSI Malls','MALL11':'Malls Brasil','BPML11':'BPM Logística','ATSA11':'Ático Shopping','FVPQ11':'Fundo Vale Paraíba',
+    'HGRE11':'CSHG Real Estate','BRCR11':'BC Fund','RCRB11':'Rio Bravo Renda Corporativa','PATC11':'Pátria Offices',
+    'PVBI11':'VBI Prime Properties','VINO11':'Vinci Offices','JSRE11':'JS Real Estate','TGAR11':'TG Ativo Real','BBPO11':'BB Progressivo',
+    'MXRF11':'Maxi Renda','IRDM11':'Iridium Recebíveis','KNCR11':'Kinea Recebíveis','KNHY11':'Kinea High Yield','MCCI11':'Mauá Capital',
+    'VRTA11':'Fator Verita','HABT11':'Habitat II','RECR11':'REC Recebíveis','VGIR11':'Valora RE','CPTS11':'Capitânia Securities',
+    'KNIP11':'Kinea Índice de Preços','RBRR11':'RBR Rendimento','OUJP11':'Ourinvest JPP','HCTR11':'Hectare CE',
+    'BCFF11':'BC Fundo de Fundos','RBFF11':'Rio Bravo FoF','HFOF11':'Hedge Top FoF','TFOF11':'Torre Forte FoF','FUND11':'Mérito Desenvolvimentos',
+    'BLMG11':'Bluemacaw Logística','RBVA11':'Rio Bravo Vacâncias','RZAK11':'Riza Akin',
+    'KNRI11':'Kinea Renda Imobiliária','HGPO11':'CSHG Prime Offices','BTRA11':'Btg Pactual Terras','RBRP11':'RBR Properties','VVPR11':'VV Properties',
+}
+
 # ==================== COLETA EM BATCH (rápido) ====================
-def coletar_batch(ativos_dict, tipo, setor_map=None):
-    """Baixa preços de todos os tickers de uma vez com yf.download()."""
+def _normaliza_close_vol(raw, tickers):
+    """Extrai DataFrames de Close e Volume, sempre com colunas = tickers."""
+    if len(tickers) == 1:
+        close_df = pd.DataFrame({tickers[0]: raw['Close']})
+        vol_df   = pd.DataFrame({tickers[0]: raw.get('Volume', pd.Series(dtype=float))})
+    else:
+        close_df = raw['Close']  if 'Close'  in raw.columns else pd.DataFrame()
+        vol_df   = raw['Volume'] if 'Volume' in raw.columns else pd.DataFrame()
+    return close_df, vol_df
+
+def _perf(col, dias):
+    """Retorna variação percentual relativa a `dias` pregões atrás."""
+    if len(col) > dias:
+        p_old = float(col.iloc[-dias-1])
+        p_new = float(col.iloc[-1])
+        if p_old > 0:
+            return round((p_new / p_old - 1) * 100, 2)
+    return None
+
+def coletar_batch(ativos_dict, tipo, setor_map=None, nome_map=None):
+    """Baixa 1 ano de dados em batch — calcula preço, variação e períodos históricos."""
     if not ativos_dict:
         return {}
 
-    nomes_map = {v: k for k, v in ativos_dict.items()}
+    ticker_para_nome = {v: k for k, v in ativos_dict.items()}
     tickers = list(ativos_dict.values())
     resultado = {}
 
     try:
         raw = yf.download(
             tickers if len(tickers) > 1 else tickers[0],
-            period='5d',
+            period='1y',
             auto_adjust=True,
             progress=False,
             threads=True,
         )
-
-        # Normaliza para DataFrame com colunas = tickers
-        if len(tickers) == 1:
-            close_df = pd.DataFrame({tickers[0]: raw['Close']})
-            vol_df = pd.DataFrame({tickers[0]: raw.get('Volume', pd.Series(dtype=float))})
-        else:
-            close_df = raw['Close'] if 'Close' in raw.columns else raw
-            vol_df = raw['Volume'] if 'Volume' in raw.columns else pd.DataFrame()
+        close_df, vol_df = _normaliza_close_vol(raw, tickers)
 
         for ticker_yf in tickers:
-            nome = nomes_map.get(ticker_yf, ticker_yf)
+            nome = ticker_para_nome.get(ticker_yf, ticker_yf)
             if ticker_yf not in close_df.columns:
                 continue
             col = close_df[ticker_yf].dropna()
-            if len(col) < 1:
+            if len(col) < 2:
                 continue
+
             preco = round(float(col.iloc[-1]), 2)
-            preco_ant = float(col.iloc[-2]) if len(col) >= 2 else preco
-            var = round(((preco / preco_ant) - 1) * 100, 2)
+            var   = round((float(col.iloc[-1]) / float(col.iloc[-2]) - 1) * 100, 2)
+
             vol = 0
             if ticker_yf in vol_df.columns:
-                try:
-                    vol = int(vol_df[ticker_yf].dropna().iloc[-1])
-                except Exception:
-                    pass
-            setor = (setor_map or {}).get(nome, '')
+                try: vol = int(vol_df[ticker_yf].dropna().iloc[-1])
+                except Exception: pass
+
+            nome_completo = (nome_map or {}).get(nome, nome)
+            setor         = (setor_map or {}).get(nome, '')
+
             resultado[nome] = {
-                'stock': nome,
-                'name': nome,
-                'close': preco,
-                'change': var,
-                'volume': vol,
+                'stock':    nome,
+                'name':     nome_completo,
+                'close':    preco,
+                'change':   var,
+                'volume':   vol,
                 'market_cap': 0,
-                'sector': setor,
-                'type': tipo,
+                'sector':   setor,
+                'type':     tipo,
+                'perf_1m':  _perf(col, 21),
+                'perf_3m':  _perf(col, 63),
+                'perf_6m':  _perf(col, 126),
+                'perf_12m': _perf(col, 252),
             }
+
     except Exception as e:
-        print(f"  Batch falhou ({tipo}): {e}. Tentando individual...")
-        for nome, ticker in ativos_dict.items():
-            try:
-                t = yf.Ticker(ticker)
-                hist = t.history(period='5d')
-                if hist.empty:
-                    continue
-                preco = round(float(hist['Close'].iloc[-1]), 2)
-                preco_ant = float(hist['Close'].iloc[-2]) if len(hist) >= 2 else preco
-                var = round(((preco / preco_ant) - 1) * 100, 2)
-                resultado[nome] = {
-                    'stock': nome, 'name': nome, 'close': preco, 'change': var,
-                    'volume': int(hist['Volume'].iloc[-1]) if 'Volume' in hist.columns else 0,
-                    'market_cap': 0,
-                    'sector': (setor_map or {}).get(nome, ''),
-                    'type': tipo,
-                }
-            except Exception:
-                pass
+        print(f"  Batch falhou ({tipo}): {e}")
 
     return resultado
 
@@ -413,11 +459,11 @@ dados = {
 }
 
 print(f"Acoes BR ({len(ATIVOS_BR)} tickers)...")
-dados['stocks'] = coletar_batch(ATIVOS_BR, 'stock', SETOR_BR)
+dados['stocks'] = coletar_batch(ATIVOS_BR, 'stock', setor_map=SETOR_BR, nome_map=NOMES_BR)
 print(f"  OK: {len(dados['stocks'])} ativos")
 
 print(f"FIIs ({len(FIIS)} tickers)...")
-dados['fiis'] = coletar_batch(FIIS, 'fii')
+dados['fiis'] = coletar_batch(FIIS, 'fii', nome_map=NOMES_FII)
 print(f"  OK: {len(dados['fiis'])} FIIs")
 
 print(f"ETFs ({len(ETFS)} tickers)...")

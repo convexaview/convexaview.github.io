@@ -662,6 +662,40 @@
   .detail-stat-label { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
   .detail-stat-value { font-size: 18px; font-weight: 700; margin-top: 4px; font-family: 'SF Mono', 'Consolas', monospace; }
 
+  /* ===== MODAL: PERÍODOS DE VALORIZAÇÃO ===== */
+  .detail-perf-section { margin: 24px 0; }
+  .detail-perf-title { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px; }
+  .detail-perf-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .detail-perf-label { font-size: 12px; color: var(--text-secondary); width: 54px; flex-shrink: 0; font-weight: 500; }
+  .detail-perf-bar-wrap {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .detail-perf-bar { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+  .detail-perf-pct { font-size: 13px; font-weight: 700; font-family: 'SF Mono','Consolas',monospace; width: 62px; text-align: right; flex-shrink: 0; }
+  .detail-perf-pct.up   { color: var(--green); }
+  .detail-perf-pct.down { color: var(--red); }
+
+  /* ===== MODAL: DESCRIÇÃO ===== */
+  .detail-desc {
+    margin-top: 20px;
+    padding: 14px 16px;
+    background: #f8f8f7;
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    border-left: 3px solid var(--border);
+  }
+
   /* ===== ANALYSIS PAGE ===== */
   .analysis-page {
     max-width: 1280px;
@@ -1777,30 +1811,175 @@ function openBrapiDetail(ticker) {
   const s = state.stockData[ticker] || state.fiiData[ticker];
   if (!s) return;
   const up = (s.change || 0) >= 0;
+  const currency = (s.type === 'us' || s.type === 'crypto') ? 'US$' : 'R$';
+  const priceStr = s.close > 1000
+    ? s.close.toLocaleString('pt-BR', { maximumFractionDigits: 2 })
+    : s.close?.toFixed(2);
+
+  // Nome completo no header (name vem do coletor agora)
+  const nomeCompleto = (s.name && s.name !== s.stock) ? s.name : s.stock;
+  const subtitulo    = (s.name && s.name !== s.stock) ? s.stock : '';
+
+  // Setor traduzido
+  const setorPt = traduzirSetor(s.sector) || s.sector || '—';
+
+  // Tipo legível
+  const tipoLabel = { stock:'Ação BR', fii:'FII', etf:'ETF', us:'Ação EUA', crypto:'Cripto' }[s.type] || s.type || '—';
+
+  // Descrição automática por tipo/setor
+  const desc = gerarDescricao(s);
+
+  // Períodos de valorização
+  const periodos = [
+    { label: '1 dia',   val: s.change },
+    { label: '1 mês',   val: s.perf_1m },
+    { label: '3 meses', val: s.perf_3m },
+    { label: '6 meses', val: s.perf_6m },
+    { label: '12 meses',val: s.perf_12m },
+  ];
+  const maxAbs = Math.max(...periodos.map(p => Math.abs(p.val || 0)), 1);
+
+  function perfRow(p) {
+    if (p.val == null) return '';
+    const isUp  = p.val >= 0;
+    const width = Math.min((Math.abs(p.val) / maxAbs) * 100, 100).toFixed(1);
+    const color = isUp ? 'var(--green)' : 'var(--red)';
+    return `
+      <div class="detail-perf-row">
+        <span class="detail-perf-label">${p.label}</span>
+        <div class="detail-perf-bar-wrap">
+          <div class="detail-perf-bar" style="width:${width}%;background:${color}"></div>
+        </div>
+        <span class="detail-perf-pct ${isUp ? 'up' : 'down'}">${isUp ? '+' : ''}${p.val.toFixed(2)}%</span>
+      </div>`;
+  }
+
   const modal = document.getElementById('detailModal');
   modal.innerHTML = `
     <button class="detail-close" onclick="closeDetail()">✕</button>
+
     <div class="detail-header">
       <div class="detail-icon">${(s.stock||'').slice(0,4)}</div>
       <div class="detail-title-wrap">
-        <h2>${s.stock}</h2>
-        <p>${s.name || ''}</p>
+        <h2>${nomeCompleto}</h2>
+        ${subtitulo ? `<p>${subtitulo}</p>` : ''}
       </div>
     </div>
+
     <div class="detail-price-row">
-      <span class="detail-price">R$ ${s.close?.toFixed(2)}</span>
+      <span class="detail-price">${currency} ${priceStr}</span>
       <span class="detail-change" style="color:${up ? 'var(--green)' : 'var(--red)'}">
-        ${up?'+':''}${s.change?.toFixed(2)}%
+        ${up ? '+' : ''}${s.change?.toFixed(2)}%
       </span>
     </div>
-    <div class="detail-grid">
-      <div class="detail-stat"><div class="detail-stat-label">Volume</div><div class="detail-stat-value">${s.volume ? formatVol(s.volume) : '—'}</div></div>
-      <div class="detail-stat"><div class="detail-stat-label">Mkt Cap</div><div class="detail-stat-value">${s.market_cap ? formatMktCap(s.market_cap) : '—'}</div></div>
-      <div class="detail-stat"><div class="detail-stat-label">Setor</div><div class="detail-stat-value" style="font-size:13px;font-family:var(--font-sans);">${s.sector || '—'}</div></div>
-      <div class="detail-stat"><div class="detail-stat-label">Tipo</div><div class="detail-stat-value" style="font-size:13px;font-family:var(--font-sans);">${s.type || '—'}</div></div>
+
+    <div class="detail-perf-section">
+      <div class="detail-perf-title">Valorização</div>
+      ${periodos.map(perfRow).join('')}
     </div>
-    ${s.logo ? `<div style="text-align:center;margin-top:20px;"><img src="${s.logo}" alt="${s.stock}" style="height:40px;border-radius:8px;"></div>` : ''}`;
+
+    <div class="detail-grid">
+      <div class="detail-stat">
+        <div class="detail-stat-label">Volume</div>
+        <div class="detail-stat-value">${s.volume ? formatVol(s.volume) : '—'}</div>
+      </div>
+      <div class="detail-stat">
+        <div class="detail-stat-label">Mkt Cap</div>
+        <div class="detail-stat-value">${s.market_cap ? formatMktCap(s.market_cap) : '—'}</div>
+      </div>
+      <div class="detail-stat">
+        <div class="detail-stat-label">Setor</div>
+        <div class="detail-stat-value" style="font-size:13px;font-family:var(--font-sans)">${setorPt}</div>
+      </div>
+      <div class="detail-stat">
+        <div class="detail-stat-label">Tipo</div>
+        <div class="detail-stat-value" style="font-size:13px;font-family:var(--font-sans)">${tipoLabel}</div>
+      </div>
+    </div>
+
+    <div class="detail-desc">${desc}</div>`;
+
   document.getElementById('detailOverlay').classList.add('open');
+}
+
+function gerarDescricao(s) {
+  const setor = traduzirSetor(s.sector) || '';
+  if (s.type === 'fii') {
+    const cat = typeof getFiiCat === 'function' ? getFiiCat(s.stock) : 'Imobiliário';
+    const descs = {
+      'Galpões':         'Fundo imobiliário focado em galpões logísticos e industriais, com renda proveniente de contratos de locação de longo prazo.',
+      'Shoppings':       'Fundo imobiliário com participação em shopping centers, com receita atrelada ao fluxo de vendas dos lojistas.',
+      'Lajes':           'Fundo imobiliário de lajes corporativas, com imóveis comerciais de alto padrão locados para grandes empresas.',
+      'Papel':           'Fundo imobiliário de recebíveis (CRI/LCI/LCA), com rendimentos indexados ao CDI ou IPCA.',
+      'Fundo de Fundos': 'Fundo que investe em cotas de outros FIIs, oferecendo diversificação com gestão ativa da carteira.',
+      'Residencial':     'Fundo imobiliário com foco em empreendimentos residenciais para renda.',
+      'Diversificado':   'Fundo imobiliário com portfólio diversificado entre diferentes segmentos do mercado imobiliário.',
+    };
+    return descs[cat] || 'Fundo de Investimento Imobiliário listado na B3.';
+  }
+  if (s.type === 'crypto') {
+    const cryptoDescs = {
+      'BTC':'Bitcoin é a primeira criptomoeda descentralizada, criada em 2009. Funciona como reserva de valor digital e meio de troca sem intermediários.',
+      'ETH':'Ethereum é uma plataforma blockchain com contratos inteligentes. Seu token nativo, o Ether, alimenta aplicações descentralizadas (DApps).',
+      'SOL':'Solana é uma blockchain de alta velocidade e baixo custo, voltada para DeFi, NFTs e aplicações Web3.',
+      'XRP':'XRP é o token da Ripple, usado para transferências internacionais rápidas e de baixo custo entre instituições financeiras.',
+      'BNB':'BNB é o token nativo da Binance, utilizado para pagar taxas na exchange e em serviços do ecossistema Binance.',
+      'ADA':'Cardano é uma blockchain com foco em segurança e sustentabilidade, desenvolvida com base em pesquisa acadêmica.',
+      'DOGE':'Dogecoin começou como meme mas se tornou uma das criptomoedas mais populares, com forte comunidade e baixo valor unitário.',
+    };
+    return cryptoDescs[s.stock] || 'Criptoativo negociado globalmente, sujeito a alta volatilidade.';
+  }
+  if (s.type === 'etf') {
+    if (s.stock === 'BOVA11') return 'ETF que replica o Ibovespa, o principal índice da Bolsa brasileira, com as ações de maior liquidez e volume.';
+    if (s.stock === 'SMAL11') return 'ETF de small caps brasileiras, empresas de menor capitalização com potencial de crescimento acelerado.';
+    if (s.stock === 'IVVB11') return 'ETF que replica o S&P 500, índice com as 500 maiores empresas americanas, negociado em reais na B3.';
+    if (s.stock === 'HASH11') return 'ETF de criptoativos, expondo o investidor ao desempenho de Bitcoin, Ethereum e outras criptomoedas.';
+    if (s.stock === 'GOLD11') return 'ETF lastreado em ouro físico, permitindo exposição ao metal precioso sem precisar comprá-lo diretamente.';
+    if (s.stock === 'NASD11') return 'ETF que replica o índice Nasdaq 100, com as maiores empresas de tecnologia dos Estados Unidos.';
+    if (s.stock === 'IMAB11') return 'ETF de renda fixa atrelado ao IMA-B, índice de títulos públicos indexados ao IPCA (NTN-B).';
+    return `ETF (fundo de índice) negociado na B3${setor ? ', com exposição a ' + setor.toLowerCase() : ''}.`;
+  }
+  if (s.type === 'us') {
+    const usDescs = {
+      'AAPL':'Apple é a maior empresa do mundo por valor de mercado, conhecida por iPhone, Mac e serviços digitais como App Store e iCloud.',
+      'MSFT':'Microsoft domina o mercado de software corporativo, cloud (Azure) e produtividade (Office 365), além de ser dona do LinkedIn e GitHub.',
+      'NVDA':'NVIDIA lidera o mercado de GPUs, componente essencial para inteligência artificial, data centers e jogos digitais.',
+      'GOOGL':'Alphabet (Google) controla o maior mecanismo de busca do mundo, YouTube, Android e uma das principais plataformas de publicidade digital.',
+      'AMZN':'Amazon é líder global em e-commerce e computação em nuvem (AWS), além de atuar em streaming (Prime Video) e logística.',
+      'META':'Meta Platforms opera Facebook, Instagram e WhatsApp, as maiores redes sociais do mundo, com bilhões de usuários ativos.',
+      'TSLA':'Tesla é pioneira em veículos elétricos e energia limpa, com negócios em baterias, software automotivo e inteligência artificial.',
+      'NVDA':'NVIDIA domina o mercado de chips para IA, data centers e jogos, sendo uma das empresas mais valiosas do mundo.',
+      'JPM':'JPMorgan Chase é o maior banco americano por ativos, com atuação em banco de investimento, crédito e gestão de patrimônio.',
+      'V':'Visa opera a maior rede de pagamentos eletrônicos do mundo, processando trilhões de dólares em transações anualmente.',
+      'MA':'Mastercard é uma das maiores redes de pagamento global, conectando consumidores, bancos e comerciantes em mais de 200 países.',
+      'BRK-B':'Berkshire Hathaway é o conglomerado de Warren Buffett, com participações em seguros, ferrovias, energia e ações de grandes empresas.',
+      'LLY':'Eli Lilly é uma das maiores farmacêuticas do mundo, com destaque para medicamentos para diabetes e obesidade (Ozempic/Mounjaro).',
+      'UNH':'UnitedHealth é o maior plano de saúde dos EUA, com operações em seguros, gestão de benefícios e serviços de saúde.',
+      'XOM':'ExxonMobil é uma das maiores petroleiras do mundo, com atuação em exploração, refino e distribuição de combustíveis.',
+      'WMT':'Walmart é o maior varejista do mundo, com mais de 10.000 lojas em 24 países e liderança crescente no e-commerce.',
+    };
+    return usDescs[s.stock] || `Empresa americana listada na ${s.stock.includes('TSM') ? 'NYSE' : 'NASDAQ/NYSE'}${setor ? ', setor de ' + setor.toLowerCase() : ''}.`;
+  }
+  // Ação BR
+  const setorDescs = {
+    'Energia':       'empresa do setor de petróleo, gás e energia, com operações de exploração, produção e/ou distribuição de combustíveis',
+    'Mineração':     'empresa do setor de mineração e siderurgia, com produção de minério de ferro, aço ou outros metais',
+    'Bancos':        'instituição financeira do setor bancário, com serviços de crédito, investimento e soluções financeiras',
+    'Financeiro':    'empresa do setor financeiro, atuando em seguros, pagamentos ou serviços de capital',
+    'Energia Elétrica':'empresa do setor de energia elétrica, com geração, transmissão e/ou distribuição de eletricidade',
+    'Saneamento':    'empresa do setor de saneamento básico, responsável por abastecimento de água e tratamento de esgoto',
+    'Telecom':       'empresa de telecomunicações, oferecendo serviços de telefonia, internet e dados',
+    'Varejo':        'empresa do setor varejista, com lojas físicas e/ou e-commerce voltado ao consumidor final',
+    'Saúde':         'empresa do setor de saúde, com atuação em hospitais, planos de saúde, diagnósticos ou farmácias',
+    'Construção':    'empresa do setor de construção civil, com foco em incorporação e desenvolvimento imobiliário',
+    'Logística':     'empresa do setor de logística e transporte, com operações em rodovias, ferrovias ou navegação',
+    'Tecnologia':    'empresa do setor de tecnologia, com soluções em software, plataformas digitais ou hardware',
+    'Agro':          'empresa do agronegócio, com atuação em produção agrícola, processamento ou distribuição de commodities',
+    'Industrial':    'empresa do setor industrial, com produção de bens de capital, máquinas ou equipamentos',
+  };
+  const descSetor = setorDescs[setor] || 'empresa listada na B3';
+  const nome = s.name && s.name !== s.stock ? s.name : s.stock;
+  return `${nome} é uma ${descSetor}, negociada na Bolsa de Valores do Brasil (B3).`;
 }
 
 function closeDetail() {
