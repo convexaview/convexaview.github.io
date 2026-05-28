@@ -916,7 +916,6 @@
         <button class="login-submit" type="submit" id="loginBtn">Entrar</button>
       </form>
       <div class="login-error" id="loginError" style="display:none;">Erro ao registrar. Tente novamente.</div>
-      <button class="login-skip" onclick="closeLoginGate()">Continuar sem cadastro</button>
     </div>
   </div>
 </div>
@@ -2017,6 +2016,11 @@ function switchPageGated(page) {
   }
   _originalSwitchPage(page);
 }
+
+// Mostra login ao clicar em qualquer lugar se ainda não logado
+document.addEventListener('click', function() {
+  if (!isLoggedIn()) requireLogin();
+}, true);
 
 updateAccessBtn();
 init();
