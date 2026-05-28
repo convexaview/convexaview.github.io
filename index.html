@@ -2017,10 +2017,7 @@ function switchPageGated(page) {
   _originalSwitchPage(page);
 }
 
-// Mostra login imediatamente se não estiver logado
-if (!isLoggedIn()) requireLogin();
-
-// Bloqueia qualquer clique fora do modal enquanto não logado
+// Abre o login no primeiro clique em qualquer parte da tela (se não estiver logado)
 document.addEventListener('click', function(e) {
   if (!isLoggedIn() && !document.getElementById('loginGate').contains(e.target)) {
     e.stopPropagation();
