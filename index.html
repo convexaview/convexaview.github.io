@@ -1479,9 +1479,9 @@ function updateTableHeaders() {
 // Retorna lista de ativos de uma categoria: tenta dadosJson primeiro, fallback BrAPI
 function getAtivos(tickers, categoria) {
   if (dadosJson && dadosJson[categoria] && Object.keys(dadosJson[categoria]).length) {
-    return tickers.map(t => dadosJson[categoria][t]).filter(Boolean);
+    return Object.values(dadosJson[categoria]); // todos os ativos do dados.json
   }
-  return tickers.map(t => findStock(t)).filter(Boolean);
+  return tickers.map(t => findStock(t)).filter(Boolean); // fallback BrAPI
 }
 
 const LOADING_ROW = cols => `<tr><td colspan="${cols}" class="loading-text">Atualizando dados...</td></tr>`;
