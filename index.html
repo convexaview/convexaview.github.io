@@ -1246,6 +1246,7 @@
   .raiox-toolbar {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 12px;
     margin-bottom: 16px;
     flex-wrap: wrap;
@@ -1259,7 +1260,7 @@
     background: var(--bg-card);
     color: var(--text);
     outline: none;
-    width: 280px;
+    width: 320px;
     max-width: 100%;
     transition: border-color 0.2s;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23a1a1aa' stroke-width='2'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='m11 11 3.5 3.5'/%3E%3C/svg%3E");
@@ -1268,40 +1269,21 @@
   }
   .raiox-search:focus { border-color: var(--text-muted); }
   .raiox-search::placeholder { color: var(--text-muted); }
-
-  .raiox-sort-group {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-  .raiox-sort-btn {
-    padding: 7px 14px;
-    border-radius: 50px;
-    border: 1.5px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text-secondary);
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.18s;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .raiox-sort-btn:hover { border-color: var(--text-muted); color: var(--text); }
-  .raiox-sort-btn.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-    font-weight: 600;
-  }
-  .raiox-sort-btn .sort-arrow { font-size: 10px; opacity: 0.7; }
   .raiox-count {
     font-size: 13px;
     color: var(--text-muted);
     font-weight: 500;
+  }
+
+  .raiox-table th:hover { color: var(--text); }
+  .th-arrow {
+    font-size: 10px;
+    opacity: 0.3;
+    transition: opacity 0.2s;
+  }
+  .th-arrow.active {
+    opacity: 1;
+    color: var(--blue);
   }
 
   .raiox-atualizado {
@@ -1620,25 +1602,19 @@
     </div>
 
     <div class="raiox-toolbar">
-      <div class="raiox-sort-group">
-        <button class="raiox-sort-btn active" onclick="sortRaioX('score')" data-sort="score">Score <span class="sort-arrow">▼</span></button>
-        <button class="raiox-sort-btn" onclick="sortRaioX('nome')" data-sort="nome">A-Z <span class="sort-arrow">▼</span></button>
-        <button class="raiox-sort-btn" onclick="sortRaioX('basileia')" data-sort="basileia">Basileia <span class="sort-arrow">▼</span></button>
-        <button class="raiox-sort-btn" onclick="sortRaioX('patrimonio')" data-sort="patrimonio">Patrimônio <span class="sort-arrow">▼</span></button>
-      </div>
-      <input class="raiox-search" type="text" id="raiox-search" placeholder="Buscar banco..." oninput="filterRaioX()">
-      <span class="raiox-count" id="raiox-count" style="margin-left:auto;"></span>
+      <input class="raiox-search" type="text" id="raiox-search" placeholder="Buscar banco por nome ou tipo..." oninput="filterRaioX()">
+      <span class="raiox-count" id="raiox-count"></span>
     </div>
 
     <div class="raiox-table-wrap">
       <table class="raiox-table">
         <thead>
           <tr>
-            <th style="text-align:left">Banco</th>
-            <th>Basileia</th>
-            <th>Imobilização</th>
-            <th>Score</th>
-            <th>Patrimônio Líq.</th>
+            <th style="text-align:left;cursor:pointer;" onclick="sortRaioX('nome')">Banco <span class="th-arrow" data-col="nome">▼</span></th>
+            <th style="cursor:pointer;" onclick="sortRaioX('basileia')">Basileia <span class="th-arrow" data-col="basileia">▼</span></th>
+            <th style="cursor:pointer;" onclick="sortRaioX('imobilizacao')">Imobilização <span class="th-arrow" data-col="imobilizacao">▼</span></th>
+            <th style="cursor:pointer;" onclick="sortRaioX('score')">Score <span class="th-arrow active" data-col="score">▼</span></th>
+            <th style="cursor:pointer;" onclick="sortRaioX('patrimonio')">Patrimônio Líq. <span class="th-arrow" data-col="patrimonio">▼</span></th>
             <th>Situação</th>
           </tr>
         </thead>
@@ -2822,12 +2798,11 @@ function sortRaioX(campo) {
     raioxSortBy = campo;
     raioxSortDir = campo === 'nome' ? 'asc' : 'desc';
   }
-  // Atualiza botões
-  document.querySelectorAll('.raiox-sort-btn').forEach(b => {
-    const active = b.dataset.sort === campo;
-    b.classList.toggle('active', active);
-    const arrow = b.querySelector('.sort-arrow');
-    if (arrow) arrow.textContent = active ? (raioxSortDir === 'desc' ? '▼' : '▲') : '▼';
+  // Atualiza setinhas nos cabeçalhos da tabela
+  document.querySelectorAll('.th-arrow').forEach(a => {
+    const isActive = a.dataset.col === campo;
+    a.classList.toggle('active', isActive);
+    a.textContent = isActive ? (raioxSortDir === 'desc' ? '▼' : '▲') : '▼';
   });
   filterRaioX();
 }
@@ -2843,6 +2818,7 @@ function filterRaioX() {
     let va, vb;
     if (raioxSortBy === 'nome') { va = a.nome.toLowerCase(); vb = b.nome.toLowerCase(); }
     else if (raioxSortBy === 'basileia') { va = a.basileia || 0; vb = b.basileia || 0; }
+    else if (raioxSortBy === 'imobilizacao') { va = a.imobilizacao || 0; vb = b.imobilizacao || 0; }
     else if (raioxSortBy === 'patrimonio') { va = a.patrimonio_liquido || 0; vb = b.patrimonio_liquido || 0; }
     else { va = a.score || 0; vb = b.score || 0; }
 
