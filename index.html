@@ -2892,9 +2892,6 @@ function renderRaioXTable(bancos) {
 
 // ===== BANNER PROMO =====
 function showPromo() {
-  // Só esconde por 24h depois de fechar
-  const closed = localStorage.getItem('promo_raiox_closed');
-  if (closed && (Date.now() - parseInt(closed)) < 86400000) return;
   const banner = document.getElementById('promoBanner');
   if (!banner) return;
   banner.style.display = 'flex';
@@ -2905,7 +2902,7 @@ function closePromo() {
   const banner = document.getElementById('promoBanner');
   if (!banner) return;
   banner.classList.add('hidden');
-  localStorage.setItem('promo_raiox_closed', Date.now().toString());
+  // não salva mais — sempre reaparece
   setTimeout(() => { banner.style.display = 'none'; }, 400);
 }
 
