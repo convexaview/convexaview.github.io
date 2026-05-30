@@ -1181,6 +1181,68 @@
     font-family: 'SF Mono','Consolas',monospace;
   }
 
+  .raiox-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .raiox-search {
+    padding: 10px 16px 10px 40px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--bg-card);
+    color: var(--text);
+    outline: none;
+    width: 280px;
+    max-width: 100%;
+    transition: border-color 0.2s;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23a1a1aa' stroke-width='2'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='m11 11 3.5 3.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 14px center;
+  }
+  .raiox-search:focus { border-color: var(--text-muted); }
+  .raiox-search::placeholder { color: var(--text-muted); }
+
+  .raiox-sort-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .raiox-sort-btn {
+    padding: 7px 14px;
+    border-radius: 50px;
+    border: 1.5px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.18s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .raiox-sort-btn:hover { border-color: var(--text-muted); color: var(--text); }
+  .raiox-sort-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+  }
+  .raiox-sort-btn .sort-arrow { font-size: 10px; opacity: 0.7; }
+  .raiox-count {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
   .raiox-atualizado {
     text-align: center;
     font-size: 12px;
@@ -1485,6 +1547,19 @@
       <div class="raiox-legenda-item"><div class="semaforo-dot verde"></div> Saudável — Basileia > 13%</div>
       <div class="raiox-legenda-item"><div class="semaforo-dot amarelo"></div> Atenção — Basileia 11% a 13%</div>
       <div class="raiox-legenda-item"><div class="semaforo-dot vermelho"></div> Risco — Basileia < 11%</div>
+    </div>
+
+    <div class="raiox-toolbar">
+      <input class="raiox-search" type="text" id="raiox-search" placeholder="Buscar banco..." oninput="filterRaioX()">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span class="raiox-count" id="raiox-count"></span>
+        <div class="raiox-sort-group">
+          <button class="raiox-sort-btn active" onclick="sortRaioX('score')" data-sort="score">Score <span class="sort-arrow">▼</span></button>
+          <button class="raiox-sort-btn" onclick="sortRaioX('nome')" data-sort="nome">A-Z <span class="sort-arrow">▼</span></button>
+          <button class="raiox-sort-btn" onclick="sortRaioX('basileia')" data-sort="basileia">Basileia <span class="sort-arrow">▼</span></button>
+          <button class="raiox-sort-btn" onclick="sortRaioX('patrimonio')" data-sort="patrimonio">Patrimônio <span class="sort-arrow">▼</span></button>
+        </div>
+      </div>
     </div>
 
     <div class="raiox-table-wrap">
@@ -2597,10 +2672,125 @@ function calcScore(b) {
 }
 
 function renderRaioX(data) {
-  const bancos = data.bancos.map(b => ({ ...b, score: calcScore(b) }))
-    .sort((a, b) => b.score - a.score);
+  raioxBancos = data.bancos.map(b => ({ ...b, score: calcScore(b) }));
+  filterRaioX();
+  if (data.atualizado_em) {
+    document.getElementById('raiox-atualizado').textContent = 'Dados atualizados em ' + data.atualizado_em + ' — Fonte: Banco Central';
+  }
+}
 
-  document.getElementById('tbRaiox').innerHTML = bancos.map(b => {
+// Dados de exemplo (enquanto o coletor não roda)
+const RAIOX_FALLBACK = {
+  atualizado_em: 'Maio/2026',
+  bancos: [
+    // Grandes Bancos
+    { nome: 'Itaú Unibanco', tipo: 'Banco Múltiplo', basileia: 16.2, imobilizacao: 8.5, liquidez: 180, inadimplencia: 2.8, patrimonio_liquido: 187e9 },
+    { nome: 'Bradesco', tipo: 'Banco Múltiplo', basileia: 15.8, imobilizacao: 12.3, liquidez: 165, inadimplencia: 4.1, patrimonio_liquido: 152e9 },
+    { nome: 'Banco do Brasil', tipo: 'Banco Público', basileia: 16.5, imobilizacao: 6.2, liquidez: 190, inadimplencia: 2.5, patrimonio_liquido: 178e9 },
+    { nome: 'Santander Brasil', tipo: 'Banco Múltiplo', basileia: 14.9, imobilizacao: 15.1, liquidez: 155, inadimplencia: 3.2, patrimonio_liquido: 85e9 },
+    { nome: 'Caixa Econômica', tipo: 'Banco Público', basileia: 14.2, imobilizacao: 18.7, liquidez: 145, inadimplencia: 3.5, patrimonio_liquido: 110e9 },
+    // Investimento
+    { nome: 'BTG Pactual', tipo: 'Banco de Investimento', basileia: 17.1, imobilizacao: 3.8, liquidez: 210, inadimplencia: 1.2, patrimonio_liquido: 52e9 },
+    { nome: 'Safra', tipo: 'Banco Múltiplo', basileia: 15.4, imobilizacao: 9.2, liquidez: 175, inadimplencia: 1.8, patrimonio_liquido: 22e9 },
+    { nome: 'Votorantim', tipo: 'Banco Múltiplo', basileia: 15.1, imobilizacao: 10.5, liquidez: 170, inadimplencia: 2.9, patrimonio_liquido: 18e9 },
+    { nome: 'ABC Brasil', tipo: 'Banco Múltiplo', basileia: 16.9, imobilizacao: 4.2, liquidez: 185, inadimplencia: 1.5, patrimonio_liquido: 5.5e9 },
+    { nome: 'Modal', tipo: 'Banco de Investimento', basileia: 18.3, imobilizacao: 3.1, liquidez: 200, inadimplencia: 1.1, patrimonio_liquido: 3.8e9 },
+    // Digitais
+    { nome: 'Nubank', tipo: 'Banco Digital', basileia: 18.5, imobilizacao: 2.1, liquidez: 220, inadimplencia: 5.8, patrimonio_liquido: 28e9 },
+    { nome: 'Inter', tipo: 'Banco Digital', basileia: 19.2, imobilizacao: 1.5, liquidez: 195, inadimplencia: 4.5, patrimonio_liquido: 6.2e9 },
+    { nome: 'C6 Bank', tipo: 'Banco Digital', basileia: 12.8, imobilizacao: 5.3, liquidez: 140, inadimplencia: 6.2, patrimonio_liquido: 4.1e9 },
+    { nome: 'PicPay', tipo: 'Banco Digital', basileia: 13.5, imobilizacao: 4.8, liquidez: 135, inadimplencia: 5.5, patrimonio_liquido: 3.5e9 },
+    { nome: 'Original', tipo: 'Banco Digital', basileia: 14.1, imobilizacao: 6.7, liquidez: 150, inadimplencia: 4.9, patrimonio_liquido: 2.8e9 },
+    { nome: 'Neon', tipo: 'Banco Digital', basileia: 12.1, imobilizacao: 3.9, liquidez: 120, inadimplencia: 7.1, patrimonio_liquido: 1.2e9 },
+    { nome: 'PagBank (PagSeguro)', tipo: 'Banco Digital', basileia: 15.8, imobilizacao: 3.2, liquidez: 175, inadimplencia: 4.2, patrimonio_liquido: 7.5e9 },
+    { nome: 'Will Bank', tipo: 'Banco Digital', basileia: 11.5, imobilizacao: 5.1, liquidez: 115, inadimplencia: 6.8, patrimonio_liquido: 0.8e9 },
+    { nome: 'Agibank', tipo: 'Banco Digital', basileia: 13.8, imobilizacao: 7.5, liquidez: 142, inadimplencia: 5.2, patrimonio_liquido: 2.2e9 },
+    { nome: 'Next (Bradesco)', tipo: 'Banco Digital', basileia: 15.8, imobilizacao: 4.0, liquidez: 165, inadimplencia: 3.8, patrimonio_liquido: 1.5e9 },
+    { nome: 'Iti (Itaú)', tipo: 'Banco Digital', basileia: 16.2, imobilizacao: 2.5, liquidez: 180, inadimplencia: 3.0, patrimonio_liquido: 1.0e9 },
+    // Médios
+    { nome: 'Daycoval', tipo: 'Banco Múltiplo', basileia: 16.8, imobilizacao: 7.4, liquidez: 160, inadimplencia: 2.1, patrimonio_liquido: 5.8e9 },
+    { nome: 'Pan', tipo: 'Banco Múltiplo', basileia: 13.4, imobilizacao: 11.8, liquidez: 138, inadimplencia: 5.9, patrimonio_liquido: 8.2e9 },
+    { nome: 'BMG', tipo: 'Banco Múltiplo', basileia: 12.2, imobilizacao: 28.5, liquidez: 115, inadimplencia: 5.5, patrimonio_liquido: 3.2e9 },
+    { nome: 'Banrisul', tipo: 'Banco Público', basileia: 13.1, imobilizacao: 22.5, liquidez: 130, inadimplencia: 3.9, patrimonio_liquido: 8.5e9 },
+    { nome: 'BRB', tipo: 'Banco Público', basileia: 14.5, imobilizacao: 16.3, liquidez: 148, inadimplencia: 3.1, patrimonio_liquido: 5.0e9 },
+    { nome: 'Banestes', tipo: 'Banco Público', basileia: 14.8, imobilizacao: 19.1, liquidez: 155, inadimplencia: 2.7, patrimonio_liquido: 3.0e9 },
+    { nome: 'Banese', tipo: 'Banco Público', basileia: 13.9, imobilizacao: 20.4, liquidez: 140, inadimplencia: 3.4, patrimonio_liquido: 1.8e9 },
+    { nome: 'Banpará', tipo: 'Banco Público', basileia: 15.2, imobilizacao: 17.8, liquidez: 152, inadimplencia: 2.6, patrimonio_liquido: 2.5e9 },
+    { nome: 'Mercantil do Brasil', tipo: 'Banco Múltiplo', basileia: 12.5, imobilizacao: 24.1, liquidez: 118, inadimplencia: 4.7, patrimonio_liquido: 2.0e9 },
+    { nome: 'Pine', tipo: 'Banco Comercial', basileia: 11.8, imobilizacao: 14.2, liquidez: 125, inadimplencia: 4.8, patrimonio_liquido: 1.5e9 },
+    { nome: 'Sofisa', tipo: 'Banco Múltiplo', basileia: 17.5, imobilizacao: 5.6, liquidez: 188, inadimplencia: 1.9, patrimonio_liquido: 2.3e9 },
+    { nome: 'Paraná Banco', tipo: 'Banco Múltiplo', basileia: 16.1, imobilizacao: 8.9, liquidez: 162, inadimplencia: 2.4, patrimonio_liquido: 1.7e9 },
+    { nome: 'Tribanco', tipo: 'Banco Múltiplo', basileia: 15.6, imobilizacao: 11.2, liquidez: 158, inadimplencia: 2.8, patrimonio_liquido: 1.3e9 },
+    { nome: 'Banco Master', tipo: 'Banco Múltiplo', basileia: 10.5, imobilizacao: 35.2, liquidez: 95, inadimplencia: 7.8, patrimonio_liquido: 2.1e9 },
+    { nome: 'Banco Voiter', tipo: 'Banco Múltiplo', basileia: 11.2, imobilizacao: 18.9, liquidez: 108, inadimplencia: 5.9, patrimonio_liquido: 0.9e9 },
+    // Cooperativas de crédito
+    { nome: 'Sicredi', tipo: 'Cooperativa', basileia: 18.9, imobilizacao: 6.8, liquidez: 205, inadimplencia: 1.6, patrimonio_liquido: 42e9 },
+    { nome: 'Sicoob', tipo: 'Cooperativa', basileia: 19.5, imobilizacao: 7.2, liquidez: 210, inadimplencia: 1.4, patrimonio_liquido: 38e9 },
+    { nome: 'Cresol', tipo: 'Cooperativa', basileia: 17.8, imobilizacao: 9.1, liquidez: 178, inadimplencia: 2.0, patrimonio_liquido: 5.5e9 },
+    { nome: 'Unicred', tipo: 'Cooperativa', basileia: 20.1, imobilizacao: 5.4, liquidez: 215, inadimplencia: 1.2, patrimonio_liquido: 4.8e9 },
+    // Consignado / Crédito
+    { nome: 'Banco Cetelem', tipo: 'Banco de Crédito', basileia: 13.2, imobilizacao: 8.4, liquidez: 132, inadimplencia: 6.5, patrimonio_liquido: 1.6e9 },
+    { nome: 'Banco Fibra', tipo: 'Banco Múltiplo', basileia: 12.9, imobilizacao: 13.5, liquidez: 128, inadimplencia: 3.8, patrimonio_liquido: 1.1e9 },
+    { nome: 'Banco Rodobens', tipo: 'Banco Múltiplo', basileia: 14.6, imobilizacao: 10.1, liquidez: 152, inadimplencia: 3.3, patrimonio_liquido: 1.4e9 },
+    { nome: 'Banco Rendimento', tipo: 'Banco Comercial', basileia: 16.4, imobilizacao: 6.3, liquidez: 172, inadimplencia: 1.7, patrimonio_liquido: 1.9e9 },
+    { nome: 'Banco Paulista', tipo: 'Banco Múltiplo', basileia: 11.9, imobilizacao: 21.3, liquidez: 112, inadimplencia: 5.1, patrimonio_liquido: 0.6e9 },
+    { nome: 'Banco Ourinvest', tipo: 'Banco Múltiplo', basileia: 13.7, imobilizacao: 15.6, liquidez: 138, inadimplencia: 3.6, patrimonio_liquido: 0.7e9 },
+    { nome: 'BS2', tipo: 'Banco Digital', basileia: 15.3, imobilizacao: 4.5, liquidez: 168, inadimplencia: 2.5, patrimonio_liquido: 1.8e9 },
+    { nome: 'Banco Alfa', tipo: 'Banco Múltiplo', basileia: 19.8, imobilizacao: 3.7, liquidez: 198, inadimplencia: 1.3, patrimonio_liquido: 3.4e9 },
+    { nome: 'Banco Industrial', tipo: 'Banco Comercial', basileia: 14.3, imobilizacao: 12.8, liquidez: 145, inadimplencia: 3.0, patrimonio_liquido: 2.6e9 },
+    { nome: 'Banco Ribeirão Preto', tipo: 'Banco Múltiplo', basileia: 12.6, imobilizacao: 19.7, liquidez: 122, inadimplencia: 4.4, patrimonio_liquido: 0.5e9 },
+  ],
+};
+
+// ===== RAIO-X: SORT & FILTER =====
+let raioxBancos = [];
+let raioxSortBy = 'score';
+let raioxSortDir = 'desc'; // desc = maior primeiro
+
+function sortRaioX(campo) {
+  if (raioxSortBy === campo) {
+    raioxSortDir = raioxSortDir === 'desc' ? 'asc' : 'desc';
+  } else {
+    raioxSortBy = campo;
+    raioxSortDir = campo === 'nome' ? 'asc' : 'desc';
+  }
+  // Atualiza botões
+  document.querySelectorAll('.raiox-sort-btn').forEach(b => {
+    const active = b.dataset.sort === campo;
+    b.classList.toggle('active', active);
+    const arrow = b.querySelector('.sort-arrow');
+    if (arrow) arrow.textContent = active ? (raioxSortDir === 'desc' ? '▼' : '▲') : '▼';
+  });
+  filterRaioX();
+}
+
+function filterRaioX() {
+  const query = (document.getElementById('raiox-search').value || '').toLowerCase().trim();
+  let filtered = raioxBancos.filter(b =>
+    !query || b.nome.toLowerCase().includes(query) || (b.tipo||'').toLowerCase().includes(query)
+  );
+
+  // Sort
+  filtered.sort((a, b) => {
+    let va, vb;
+    if (raioxSortBy === 'nome') { va = a.nome.toLowerCase(); vb = b.nome.toLowerCase(); }
+    else if (raioxSortBy === 'basileia') { va = a.basileia || 0; vb = b.basileia || 0; }
+    else if (raioxSortBy === 'patrimonio') { va = a.patrimonio_liquido || 0; vb = b.patrimonio_liquido || 0; }
+    else { va = a.score || 0; vb = b.score || 0; }
+
+    if (raioxSortBy === 'nome') {
+      return raioxSortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+    }
+    return raioxSortDir === 'desc' ? vb - va : va - vb;
+  });
+
+  renderRaioXTable(filtered);
+  const countEl = document.getElementById('raiox-count');
+  if (countEl) countEl.textContent = filtered.length + ' banco' + (filtered.length !== 1 ? 's' : '');
+}
+
+function renderRaioXTable(bancos) {
+  document.getElementById('tbRaiox').innerHTML = bancos.length ? bancos.map(b => {
     const sem = getSemaforo(b.basileia || 0);
     const scoreColor = b.score >= 70 ? '#16a34a' : b.score >= 50 ? '#eab308' : '#dc2626';
     const basColor = (b.basileia||0) >= 13 ? 'background:rgba(22,163,74,0.1);color:#16a34a' :
@@ -2629,34 +2819,8 @@ function renderRaioX(data) {
         ${sem.label}
       </span></td>
     </tr>`;
-  }).join('');
-
-  if (data.atualizado_em) {
-    document.getElementById('raiox-atualizado').textContent = 'Dados atualizados em ' + data.atualizado_em + ' — Fonte: Banco Central';
-  }
+  }).join('') : '<tr><td colspan="6" class="loading-text">Nenhum banco encontrado</td></tr>';
 }
-
-// Dados de exemplo (enquanto o coletor não roda)
-const RAIOX_FALLBACK = {
-  atualizado_em: 'Maio/2026',
-  bancos: [
-    { nome: 'Itaú Unibanco', tipo: 'Banco Múltiplo', basileia: 16.2, imobilizacao: 8.5, liquidez: 180, inadimplencia: 2.8, patrimonio_liquido: 187e9 },
-    { nome: 'Bradesco', tipo: 'Banco Múltiplo', basileia: 15.8, imobilizacao: 12.3, liquidez: 165, inadimplencia: 4.1, patrimonio_liquido: 152e9 },
-    { nome: 'Banco do Brasil', tipo: 'Banco Público', basileia: 16.5, imobilizacao: 6.2, liquidez: 190, inadimplencia: 2.5, patrimonio_liquido: 178e9 },
-    { nome: 'Santander Brasil', tipo: 'Banco Múltiplo', basileia: 14.9, imobilizacao: 15.1, liquidez: 155, inadimplencia: 3.2, patrimonio_liquido: 85e9 },
-    { nome: 'BTG Pactual', tipo: 'Banco de Investimento', basileia: 17.1, imobilizacao: 3.8, liquidez: 210, inadimplencia: 1.2, patrimonio_liquido: 52e9 },
-    { nome: 'Nubank', tipo: 'Banco Digital', basileia: 18.5, imobilizacao: 2.1, liquidez: 220, inadimplencia: 5.8, patrimonio_liquido: 28e9 },
-    { nome: 'Caixa Econômica', tipo: 'Banco Público', basileia: 14.2, imobilizacao: 18.7, liquidez: 145, inadimplencia: 3.5, patrimonio_liquido: 110e9 },
-    { nome: 'Safra', tipo: 'Banco Múltiplo', basileia: 15.4, imobilizacao: 9.2, liquidez: 175, inadimplencia: 1.8, patrimonio_liquido: 22e9 },
-    { nome: 'Banrisul', tipo: 'Banco Público', basileia: 13.1, imobilizacao: 22.5, liquidez: 130, inadimplencia: 3.9, patrimonio_liquido: 8.5e9 },
-    { nome: 'Inter', tipo: 'Banco Digital', basileia: 19.2, imobilizacao: 1.5, liquidez: 195, inadimplencia: 4.5, patrimonio_liquido: 6.2e9 },
-    { nome: 'C6 Bank', tipo: 'Banco Digital', basileia: 12.8, imobilizacao: 5.3, liquidez: 140, inadimplencia: 6.2, patrimonio_liquido: 4.1e9 },
-    { nome: 'Daycoval', tipo: 'Banco Múltiplo', basileia: 16.8, imobilizacao: 7.4, liquidez: 160, inadimplencia: 2.1, patrimonio_liquido: 5.8e9 },
-    { nome: 'BMG', tipo: 'Banco Múltiplo', basileia: 12.2, imobilizacao: 28.5, liquidez: 115, inadimplencia: 5.5, patrimonio_liquido: 3.2e9 },
-    { nome: 'Pine', tipo: 'Banco Comercial', basileia: 11.8, imobilizacao: 14.2, liquidez: 125, inadimplencia: 4.8, patrimonio_liquido: 1.5e9 },
-    { nome: 'Banco Master', tipo: 'Banco Múltiplo', basileia: 10.5, imobilizacao: 35.2, liquidez: 95, inadimplencia: 7.8, patrimonio_liquido: 2.1e9 },
-  ],
-};
 
 // ===== BANNER PROMO =====
 function showPromo() {
