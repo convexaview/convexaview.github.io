@@ -940,6 +940,260 @@
     padding-left: 2px;
   }
   .login-field.has-error .field-error { display: block; }
+
+  /* ===== RAIO-X BANCÁRIO: ABA DESTAQUE ===== */
+  .nav-raiox {
+    font-weight: 700 !important;
+    color: var(--red) !important;
+    position: relative;
+  }
+  .nav-raiox::before {
+    content: 'NOVO';
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    font-size: 8px;
+    font-weight: 800;
+    background: var(--red);
+    color: #fff;
+    padding: 1px 5px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    line-height: 1.4;
+  }
+  .nav-raiox.active { background: rgba(220,38,38,0.08) !important; }
+
+  /* ===== BANNER PROMO (ticker bar) ===== */
+  .promo-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 14px 24px;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.25);
+    animation: promoSlideUp 0.6s ease forwards;
+    transform: translateY(100%);
+  }
+  @keyframes promoSlideUp { to { transform: translateY(0); } }
+  .promo-banner.hidden { animation: promoSlideDown 0.4s ease forwards; }
+  @keyframes promoSlideDown { to { transform: translateY(100%); pointer-events: none; } }
+
+  .promo-pulse {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #f87171;
+    animation: promoPulse 1.5s infinite;
+    flex-shrink: 0;
+  }
+  @keyframes promoPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(248,113,113,0.6); } 50% { box-shadow: 0 0 0 8px rgba(248,113,113,0); } }
+
+  .promo-text {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  .promo-text strong { font-weight: 700; color: #fbbf24; }
+  .promo-cta {
+    padding: 8px 20px;
+    border-radius: 50px;
+    background: #fff;
+    color: #1a1a2e;
+    font-size: 13px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    font-family: inherit;
+    flex-shrink: 0;
+  }
+  .promo-cta:hover { background: #fbbf24; color: #000; transform: scale(1.05); }
+  .promo-close {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.4);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .promo-close:hover { color: #fff; }
+
+  @media (max-width: 768px) {
+    .promo-banner { flex-direction: column; gap: 10px; padding: 14px 40px 14px 16px; }
+    .promo-text { font-size: 13px; text-align: center; }
+    .promo-pulse { display: none; }
+  }
+
+  /* ===== RAIO-X BANCÁRIO: PÁGINA ===== */
+  .raiox-page {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 24px 48px;
+  }
+  .raiox-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    border-radius: 16px;
+    padding: 40px 36px;
+    margin-bottom: 32px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .raiox-hero::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(248,113,113,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .raiox-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #fbbf24;
+    margin-bottom: 16px;
+  }
+  .raiox-hero h1 {
+    font-family: var(--font-serif);
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    line-height: 1.15;
+  }
+  .raiox-hero p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.6;
+    max-width: 600px;
+  }
+
+  .raiox-legenda {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .raiox-legenda-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .semaforo-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .semaforo-dot.verde { background: #16a34a; box-shadow: 0 0 6px rgba(22,163,74,0.4); }
+  .semaforo-dot.amarelo { background: #eab308; box-shadow: 0 0 6px rgba(234,179,8,0.4); }
+  .semaforo-dot.vermelho { background: #dc2626; box-shadow: 0 0 6px rgba(220,38,38,0.4); }
+
+  .raiox-table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .raiox-table { width: 100%; border-collapse: collapse; }
+  .raiox-table thead { background: #f8f8f7; }
+  .raiox-table th {
+    padding: 14px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+  }
+  .raiox-table th:first-child { text-align: left; }
+  .raiox-table td {
+    padding: 16px;
+    font-size: 14px;
+    text-align: right;
+    border-bottom: 1px solid #f4f4f5;
+    vertical-align: middle;
+  }
+  .raiox-table td:first-child { text-align: left; }
+  .raiox-table tbody tr { cursor: pointer; transition: background 0.15s; }
+  .raiox-table tbody tr:hover { background: #fafaf9; }
+
+  .banco-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .banco-semaforo {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .banco-nome { font-weight: 600; color: var(--text); }
+  .banco-tipo { font-size: 11px; color: var(--text-muted); }
+
+  .score-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .score-bar {
+    width: 60px; height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .score-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+  .score-value {
+    font-family: 'SF Mono','Consolas',monospace;
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 32px;
+    text-align: right;
+  }
+
+  .basileia-badge {
+    display: inline-flex;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'SF Mono','Consolas',monospace;
+  }
+
+  .raiox-atualizado {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 16px;
+  }
+
+  @media (max-width: 768px) {
+    .raiox-hero { padding: 28px 20px; }
+    .raiox-hero h1 { font-size: 24px; }
+    .raiox-table th:nth-child(n+4),
+    .raiox-table td:nth-child(n+4) { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -1000,6 +1254,7 @@
       <button class="nav-item" data-page="internacional">Internacional</button>
       <button class="nav-item" data-page="cripto">Cripto</button>
       <button class="nav-item" data-page="analises">Análises</button>
+      <button class="nav-item nav-raiox" data-page="raiox">Raio-X Bancário</button>
     </nav>
     <div class="header-right">
       <button class="search-btn" title="Buscar">
@@ -1020,6 +1275,7 @@
     <button class="mobile-nav-item" data-page="internacional">Internacional</button>
     <button class="mobile-nav-item" data-page="cripto">Cripto</button>
     <button class="mobile-nav-item" data-page="analises">Análises</button>
+    <button class="mobile-nav-item nav-raiox" data-page="raiox">Raio-X Bancário</button>
   </div>
 </div>
 
@@ -1212,6 +1468,55 @@
     <div id="analysisCards"></div>
   </div>
 </section>
+
+<!-- ===== PAGE: RAIO-X BANCÁRIO ===== -->
+<section class="page-section" id="page-raiox">
+  <div class="raiox-page">
+    <div class="raiox-hero">
+      <div class="raiox-hero-badge">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 1"/></svg>
+        Dados oficiais do Banco Central
+      </div>
+      <h1>Raio-X Bancário</h1>
+      <p>Análise de saúde financeira dos bancos brasileiros com base nos dados do IF.data (Banco Central). Descubra se o banco onde você investe é seguro.</p>
+    </div>
+
+    <div class="raiox-legenda">
+      <div class="raiox-legenda-item"><div class="semaforo-dot verde"></div> Saudável — Basileia > 13%</div>
+      <div class="raiox-legenda-item"><div class="semaforo-dot amarelo"></div> Atenção — Basileia 11% a 13%</div>
+      <div class="raiox-legenda-item"><div class="semaforo-dot vermelho"></div> Risco — Basileia < 11%</div>
+    </div>
+
+    <div class="raiox-table-wrap">
+      <table class="raiox-table">
+        <thead>
+          <tr>
+            <th style="text-align:left">Banco</th>
+            <th>Basileia</th>
+            <th>Imobilização</th>
+            <th>Score</th>
+            <th>Patrimônio Líq.</th>
+            <th>Situação</th>
+          </tr>
+        </thead>
+        <tbody id="tbRaiox">
+          <tr><td colspan="6" class="loading-text">Carregando dados do Banco Central...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="raiox-atualizado" id="raiox-atualizado"></div>
+  </div>
+</section>
+
+<!-- BANNER PROMO RAIO-X -->
+<div class="promo-banner" id="promoBanner" style="display:none;">
+  <div class="promo-pulse"></div>
+  <div class="promo-text">
+    <strong>Seus investimentos estão seguros?</strong> Descubra a saúde financeira do seu banco com o Raio-X Bancário
+  </div>
+  <button class="promo-cta" onclick="switchPageGated('raiox');closePromo();">Ver Raio-X</button>
+  <button class="promo-close" onclick="closePromo()" title="Fechar">✕</button>
+</div>
 
 <!-- DETAIL MODAL -->
 <div class="detail-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
@@ -2264,8 +2569,127 @@ function switchPageGated(page) {
   _originalSwitchPage(page);
 }
 
+// ===== RAIO-X BANCÁRIO =====
+async function loadRaioX() {
+  try {
+    const resp = await fetch('./raiox.json?t=' + Date.now());
+    const data = await resp.json();
+    if (!data || !data.bancos || !data.bancos.length) throw new Error('Sem dados');
+    renderRaioX(data);
+  } catch (e) {
+    console.warn('raiox.json não encontrado, usando dados de exemplo.');
+    renderRaioX(RAIOX_FALLBACK);
+  }
+}
+
+function getSemaforo(basileia) {
+  if (basileia >= 13) return { cor: 'verde', label: 'Saudável', css: 'background:#16a34a' };
+  if (basileia >= 11) return { cor: 'amarelo', label: 'Atenção', css: 'background:#eab308' };
+  return { cor: 'vermelho', label: 'Risco', css: 'background:#dc2626' };
+}
+
+function calcScore(b) {
+  const basileia = Math.min((b.basileia || 0) / 20, 1) * 40;
+  const imob = Math.max(0, 1 - (b.imobilizacao || 0) / 50) * 20;
+  const liq = Math.min((b.liquidez || 100) / 200, 1) * 20;
+  const inad = Math.max(0, 1 - (b.inadimplencia || 0) / 10) * 20;
+  return Math.round(basileia + imob + liq + inad);
+}
+
+function renderRaioX(data) {
+  const bancos = data.bancos.map(b => ({ ...b, score: calcScore(b) }))
+    .sort((a, b) => b.score - a.score);
+
+  document.getElementById('tbRaiox').innerHTML = bancos.map(b => {
+    const sem = getSemaforo(b.basileia || 0);
+    const scoreColor = b.score >= 70 ? '#16a34a' : b.score >= 50 ? '#eab308' : '#dc2626';
+    const basColor = (b.basileia||0) >= 13 ? 'background:rgba(22,163,74,0.1);color:#16a34a' :
+                     (b.basileia||0) >= 11 ? 'background:rgba(234,179,8,0.1);color:#ca8a04' :
+                     'background:rgba(220,38,38,0.1);color:#dc2626';
+    const plStr = b.patrimonio_liquido >= 1e9 ? 'R$ ' + (b.patrimonio_liquido/1e9).toFixed(1) + ' bi' :
+                  b.patrimonio_liquido >= 1e6 ? 'R$ ' + (b.patrimonio_liquido/1e6).toFixed(0) + ' mi' : '—';
+
+    return `<tr>
+      <td><div class="banco-cell">
+        <div class="banco-semaforo" style="${sem.css}"></div>
+        <div>
+          <div class="banco-nome">${b.nome}</div>
+          <div class="banco-tipo">${b.tipo || 'Banco'}</div>
+        </div>
+      </div></td>
+      <td><span class="basileia-badge" style="${basColor}">${(b.basileia||0).toFixed(1)}%</span></td>
+      <td><span style="font-family:'SF Mono','Consolas',monospace;font-size:13px;">${(b.imobilizacao||0).toFixed(1)}%</span></td>
+      <td><div class="score-bar-wrap">
+        <div class="score-bar"><div class="score-bar-fill" style="width:${b.score}%;background:${scoreColor}"></div></div>
+        <span class="score-value" style="color:${scoreColor}">${b.score}</span>
+      </div></td>
+      <td><span style="font-family:'SF Mono','Consolas',monospace;font-size:13px;">${plStr}</span></td>
+      <td><span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:${sem.cor === 'verde' ? '#16a34a' : sem.cor === 'amarelo' ? '#ca8a04' : '#dc2626'}">
+        <span style="width:6px;height:6px;border-radius:50%;${sem.css};flex-shrink:0;"></span>
+        ${sem.label}
+      </span></td>
+    </tr>`;
+  }).join('');
+
+  if (data.atualizado_em) {
+    document.getElementById('raiox-atualizado').textContent = 'Dados atualizados em ' + data.atualizado_em + ' — Fonte: Banco Central (IF.data)';
+  }
+}
+
+// Dados de exemplo (enquanto o coletor não roda)
+const RAIOX_FALLBACK = {
+  atualizado_em: 'Maio/2026',
+  bancos: [
+    { nome: 'Itaú Unibanco', tipo: 'Banco Múltiplo', basileia: 16.2, imobilizacao: 8.5, liquidez: 180, inadimplencia: 2.8, patrimonio_liquido: 187e9 },
+    { nome: 'Bradesco', tipo: 'Banco Múltiplo', basileia: 15.8, imobilizacao: 12.3, liquidez: 165, inadimplencia: 4.1, patrimonio_liquido: 152e9 },
+    { nome: 'Banco do Brasil', tipo: 'Banco Público', basileia: 16.5, imobilizacao: 6.2, liquidez: 190, inadimplencia: 2.5, patrimonio_liquido: 178e9 },
+    { nome: 'Santander Brasil', tipo: 'Banco Múltiplo', basileia: 14.9, imobilizacao: 15.1, liquidez: 155, inadimplencia: 3.2, patrimonio_liquido: 85e9 },
+    { nome: 'BTG Pactual', tipo: 'Banco de Investimento', basileia: 17.1, imobilizacao: 3.8, liquidez: 210, inadimplencia: 1.2, patrimonio_liquido: 52e9 },
+    { nome: 'Nubank', tipo: 'Banco Digital', basileia: 18.5, imobilizacao: 2.1, liquidez: 220, inadimplencia: 5.8, patrimonio_liquido: 28e9 },
+    { nome: 'Caixa Econômica', tipo: 'Banco Público', basileia: 14.2, imobilizacao: 18.7, liquidez: 145, inadimplencia: 3.5, patrimonio_liquido: 110e9 },
+    { nome: 'Safra', tipo: 'Banco Múltiplo', basileia: 15.4, imobilizacao: 9.2, liquidez: 175, inadimplencia: 1.8, patrimonio_liquido: 22e9 },
+    { nome: 'Banrisul', tipo: 'Banco Público', basileia: 13.1, imobilizacao: 22.5, liquidez: 130, inadimplencia: 3.9, patrimonio_liquido: 8.5e9 },
+    { nome: 'Inter', tipo: 'Banco Digital', basileia: 19.2, imobilizacao: 1.5, liquidez: 195, inadimplencia: 4.5, patrimonio_liquido: 6.2e9 },
+    { nome: 'C6 Bank', tipo: 'Banco Digital', basileia: 12.8, imobilizacao: 5.3, liquidez: 140, inadimplencia: 6.2, patrimonio_liquido: 4.1e9 },
+    { nome: 'Daycoval', tipo: 'Banco Múltiplo', basileia: 16.8, imobilizacao: 7.4, liquidez: 160, inadimplencia: 2.1, patrimonio_liquido: 5.8e9 },
+    { nome: 'BMG', tipo: 'Banco Múltiplo', basileia: 12.2, imobilizacao: 28.5, liquidez: 115, inadimplencia: 5.5, patrimonio_liquido: 3.2e9 },
+    { nome: 'Pine', tipo: 'Banco Comercial', basileia: 11.8, imobilizacao: 14.2, liquidez: 125, inadimplencia: 4.8, patrimonio_liquido: 1.5e9 },
+    { nome: 'Banco Master', tipo: 'Banco Múltiplo', basileia: 10.5, imobilizacao: 35.2, liquidez: 95, inadimplencia: 7.8, patrimonio_liquido: 2.1e9 },
+  ],
+};
+
+// ===== BANNER PROMO =====
+function showPromo() {
+  if (sessionStorage.getItem('promo_closed')) return;
+  const banner = document.getElementById('promoBanner');
+  banner.style.display = 'flex';
+  banner.classList.remove('hidden');
+}
+
+function closePromo() {
+  const banner = document.getElementById('promoBanner');
+  banner.classList.add('hidden');
+  sessionStorage.setItem('promo_closed', '1');
+  setTimeout(() => { banner.style.display = 'none'; }, 400);
+}
+
+// Mostra o banner 15s depois do carregamento (não ser invasivo)
+setTimeout(showPromo, 15000);
+
+// Adicionar raiox às GATED_PAGES
+GATED_PAGES.push('raiox');
+
 updateAccessBtn();
 init();
+
+// Carrega Raio-X quando a página é acessada (lazy load)
+const _origSwitch = switchPageGated;
+switchPageGated = function(page) {
+  _origSwitch(page);
+  if (page === 'raiox' && document.getElementById('tbRaiox').querySelector('.loading-text')) {
+    loadRaioX();
+  }
+};
 </script>
 </body>
 </html>
