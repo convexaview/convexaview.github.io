@@ -252,20 +252,15 @@ def classificar_noticia(title, default_cat='acoes'):
             return cat
     return default_cat
 
-def tempo_relativo(published):
+def publicacao_iso(published):
+    """Converte published_parsed para ISO 8601 UTC string."""
     try:
         if hasattr(published, 'tm_year'):
             pub_dt = datetime(*published[:6])
-            diff = datetime.utcnow() - pub_dt
-        else:
-            return '1h'
-        mins = int(diff.total_seconds() / 60)
-        if mins < 1: return 'agora'
-        if mins < 60: return f'{mins} min'
-        if mins < 1440: return f'{mins // 60}h'
-        return f'{mins // 1440}d'
+            return pub_dt.strftime('%Y-%m-%dT%H:%M:%SZ')
+        return None
     except Exception:
-        return '1h'
+        return None
 
 def limpar_html(texto):
     if not texto: return ''
@@ -295,10 +290,11 @@ def coletar_noticias():
                 summary = limpar_html(summary_raw)
                 published = entry.get('published_parsed', entry.get('updated_parsed'))
                 cat = classificar_noticia(title, feed_info['default_cat'])
+                pub_iso = publicacao_iso(published) if published else datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
                 todas.append({
                     'title': title, 'summary': summary,
                     'source': feed_info['source'], 'url': url,
-                    'time': tempo_relativo(published) if published else '1h',
+                    'time': pub_iso,
                     'cat': cat, 'tickers': [],
                 })
         except Exception as e:

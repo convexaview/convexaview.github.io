@@ -1270,8 +1270,25 @@ async function loadAnalises() {
   renderAnalyses(); // fallback com dados hardcoded
 }
 
-// ===== NAVIGATION =====
-// ... (o resto do seu código de navegação continua aqui para baixo) ...
+// ===== TEMPO RELATIVO (calcula em tempo real no frontend) =====
+function tempoRelativo(isoOrText) {
+  if (!isoOrText) return '';
+  // Se já é texto legível (fallback estático), retorna direto
+  if (!/^\d{4}-\d{2}-\d{2}T/.test(isoOrText)) return isoOrText;
+  try {
+    const pub = new Date(isoOrText);
+    const now = new Date();
+    const diffMs = now - pub;
+    const mins = Math.floor(diffMs / 60000);
+    if (mins < 1) return 'agora';
+    if (mins < 60) return `${mins} min`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h`;
+    const dias = Math.floor(hrs / 24);
+    return `${dias}d`;
+  } catch { return isoOrText; }
+}
+
 // ===== NAVIGATION =====
 function switchPage(page) {
   state.currentPage = page;
@@ -1403,7 +1420,7 @@ function renderNews() {
   const tickersHtml = (h.tickers || []).map(t => `<span class="ticker-tag">${t}</span>`).join('');
   const urlAttr = h.url ? `onclick="window.open('${h.url}','_blank')" style="cursor:pointer"` : '';
   document.getElementById('heroMeta').innerHTML = `
-    <span class="hero-source">${h.source}</span><span>·</span><span>${h.time}</span>
+    <span class="hero-source">${h.source}</span><span>·</span><span>${tempoRelativo(h.time)}</span>
     ${tickersHtml ? `<span>·</span><div class="hero-tickers">${tickersHtml}</div>` : ''}`;
   if (h.url) {
     document.getElementById('heroTitle').style.cursor = 'pointer';
@@ -1413,7 +1430,7 @@ function renderNews() {
   document.getElementById('featuredCards').innerHTML = (NEWS_DATA.featured || []).map(f => `
     <div class="featured-card" ${f.url ? `onclick="window.open('${f.url}','_blank')"` : ''} style="${f.url ? 'cursor:pointer' : ''}">
       <div class="featured-meta">
-        <span>${f.source}</span><span>·</span><span>${f.time}</span>
+        <span>${f.source}</span><span>·</span><span>${tempoRelativo(f.time)}</span>
         ${f.exclusive ? '<span class="exclusive-badge">EXCLUSIVO</span>' : ''}
       </div>
       <div class="featured-title">${f.title}</div>
@@ -1449,7 +1466,7 @@ function renderNewsList() {
       <div class="news-item-meta">
         <span class="news-item-source">${n.source}</span>
         <span>·</span>
-        <span>⏱ ${n.time}</span>
+        <span>⏱ ${tempoRelativo(n.time)}</span>
       </div>
       <div class="news-item-title">
         <span>${n.title}</span>
