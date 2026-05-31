@@ -1,50 +1,104 @@
 {
   "headline": {
-    "title": "Advogado que virou gestor de R$ 17 bi conta como o mercado mudou o Brasil",
-    "summary": "João Peixoto Neto, CEO e fundador da Ouro Preto Investimentos, tem mais de 30 anos de mercado financeiro",
+    "title": "Petrobras vai reduzir preço do diesel nesta segunda-feira; veja valores",
+    "summary": "Para o consumidor final, desconto vai neutralizar a reoneração do PIS e Cofins, que também passe a valor a partir do dia 1º",
     "source": "InfoMoney",
-    "url": "https://www.infomoney.com.br/onde-investir/advogado-que-virou-gestor-de-r-17-bi-conta-como-o-mercado-mudou-o-brasil/",
-    "time": "2026-05-31T12:46:00Z",
+    "url": "https://www.infomoney.com.br/consumo/petrobras-vai-reduzir-preco-do-diesel-nesta-segunda-feira-veja-valores/",
+    "time": "2026-05-31T20:50:28Z",
     "cat": "acoes",
     "tickers": []
   },
   "featured": [
     {
-      "title": "Mais fácil e mais rápido: pré-preenchida e IA aceleram o envio de declarações do IR",
-      "summary": "Relatos de especialistas corroboram com a tendência da IA como uma espécie de especialista tributária",
+      "title": "Trump critica juiz que proibiu construção do salão de festas da Casa Branca",
+      "summary": "Trump argumentou que Leon está \"brincando\" com a segurança dos EUA e que ele seria responsabilizado caso algo acontecesse ao país",
       "source": "InfoMoney",
-      "url": "https://www.infomoney.com.br/minhas-financas/mais-e-mais-rapido-pre-preenchida-e-ia-aceleram-o-envio-de-declaracoes-do-imposto-de-renda/",
-      "time": "2026-05-31T12:00:00Z",
-      "cat": "acoes",
+      "url": "https://www.infomoney.com.br/mundo/trump-critica-juiz-que-proibiu-construcao-do-salao-de-festas-da-casa-branca/",
+      "time": "2026-05-31T19:45:00Z",
+      "cat": "internacional",
       "tickers": []
     },
     {
-      "title": "Bitcoin (BTC) recua 4% na semana e opera acima dos US$ 73 mil; veja os preços das criptomoedas neste domingo (31)",
-      "summary": "As maiores criptomoedas do mundo registram desempenho levemente positivo neste domingo (31), mas acumulam perdas ao longo da semana. Por volta das 10h20 (horário de Brasília), o bitcoin (BTC) subia 0,34% nas últimas 24 h",
-      "source": "Money Times",
-      "url": "https://www.moneytimes.com.br/bitcoin-btc-recua-4-na-semana-e-opera-acima-dos-us-73-mil-veja-os-precos-das-criptomoedas-neste-domingo-31-lmrs/",
-      "time": "2026-05-31T13:36:35Z",
-      "cat": "cripto",
+      "title": "Ministro diz a jornal que Alcolumbre está aberto a recompor relação com Lula",
+      "summary": "Guimarães reconheceu ao jornal que o presidente do Senado teve papel na derrota do advogado-geral da União, Jorge Messias, na indicação ao Supremo Tribunal Federal (STF)",
+      "source": "InfoMoney",
+      "url": "https://www.infomoney.com.br/politica/ministro-diz-a-jornal-que-alcolumbre-esta-aberto-a-recompor-relacao-com-lula/",
+      "time": "2026-05-31T19:24:00Z",
+      "cat": "acoes",
       "tickers": []
     }
   ],
   "all": [
     {
-      "title": "Advogado que virou gestor de R$ 17 bi conta como o mercado mudou o Brasil",
-      "summary": "João Peixoto Neto, CEO e fundador da Ouro Preto Investimentos, tem mais de 30 anos de mercado financeiro",
+      "title": "Petrobras vai reduzir preço do diesel nesta segunda-feira; veja valores",
+      "summary": "Para o consumidor final, desconto vai neutralizar a reoneração do PIS e Cofins, que também passe a valor a partir do dia 1º",
       "source": "InfoMoney",
-      "url": "https://www.infomoney.com.br/onde-investir/advogado-que-virou-gestor-de-r-17-bi-conta-como-o-mercado-mudou-o-brasil/",
-      "time": "2026-05-31T12:46:00Z",
+      "url": "https://www.infomoney.com.br/consumo/petrobras-vai-reduzir-preco-do-diesel-nesta-segunda-feira-veja-valores/",
+      "time": "2026-05-31T20:50:28Z",
       "cat": "acoes",
       "tickers": []
     },
     {
-      "title": "Mais fácil e mais rápido: pré-preenchida e IA aceleram o envio de declarações do IR",
-      "summary": "Relatos de especialistas corroboram com a tendência da IA como uma espécie de especialista tributária",
+      "title": "Trump critica juiz que proibiu construção do salão de festas da Casa Branca",
+      "summary": "Trump argumentou que Leon está \"brincando\" com a segurança dos EUA e que ele seria responsabilizado caso algo acontecesse ao país",
       "source": "InfoMoney",
-      "url": "https://www.infomoney.com.br/minhas-financas/mais-e-mais-rapido-pre-preenchida-e-ia-aceleram-o-envio-de-declaracoes-do-imposto-de-renda/",
-      "time": "2026-05-31T12:00:00Z",
+      "url": "https://www.infomoney.com.br/mundo/trump-critica-juiz-que-proibiu-construcao-do-salao-de-festas-da-casa-branca/",
+      "time": "2026-05-31T19:45:00Z",
+      "cat": "internacional",
+      "tickers": []
+    },
+    {
+      "title": "Ministro diz a jornal que Alcolumbre está aberto a recompor relação com Lula",
+      "summary": "Guimarães reconheceu ao jornal que o presidente do Senado teve papel na derrota do advogado-geral da União, Jorge Messias, na indicação ao Supremo Tribunal Federal (STF)",
+      "source": "InfoMoney",
+      "url": "https://www.infomoney.com.br/politica/ministro-diz-a-jornal-que-alcolumbre-esta-aberto-a-recompor-relacao-com-lula/",
+      "time": "2026-05-31T19:24:00Z",
       "cat": "acoes",
+      "tickers": []
+    },
+    {
+      "title": "‘Sell in May’: maio é o pior mês do ano do Ibovespa em 3 anos, mas será que é hora de ‘ir embora’?",
+      "summary": "O velho ditado de Wall Street, “sell in May and go away” parece ter funcionado para o mercado brasileiro dessa vez. Pressionado por uma inflação mais persistente, ruídos políticos e um cenário externo adverso, o Ibovespa",
+      "source": "Money Times",
+      "url": "https://www.moneytimes.com.br/conteudo-de-marca/sell-in-may-maio-e-o-pior-mes-do-ano-do-ibovespa-em-3-anos-mas-sera-que-e-hora-de-ir-embora-eplu-lbrdcp149/",
+      "time": "2026-05-31T17:00:00Z",
+      "cat": "acoes",
+      "tickers": []
+    },
+    {
+      "title": "Bradesco (BBDC3;BBDC4), Allos (ALOS3) e mais outras 2 empresas pagam dividendos nesta semana; veja o calendário",
+      "summary": "Na semana de 1º a 5 de junho, quatro companhias da bolsa brasileira pagam dividendos e juros sobre capital próprio (JCP) aos seus acionistas. Na segunda-feira (2), o Bradesco (BBDC3;BBDC4) realiza pagamento de dividendos",
+      "source": "Money Times",
+      "url": "https://www.moneytimes.com.br/dividendos-da-semana-29-5-26-apsa/",
+      "time": "2026-05-31T16:00:00Z",
+      "cat": "fundos",
+      "tickers": []
+    },
+    {
+      "title": "Agenda: Payroll dos EUA, PIB da zona do euro e feriado no Brasil mexem com a semana",
+      "summary": "A semana começa com foco em indicadores de atividade, especialmente industriais. Na segunda-feira (1), a divulgação de diversos PMIs ao redor do mundo, incluindo zona do euro, Reino Unido, Brasil e Estados Unidos, ajuda ",
+      "source": "Money Times",
+      "url": "https://www.moneytimes.com.br/agenda-payroll-dos-eua-pib-da-zona-do-euro-e-feriado-no-brasil-mexem-com-a-semana/",
+      "time": "2026-05-31T15:00:00Z",
+      "cat": "economia",
+      "tickers": []
+    },
+    {
+      "title": "Irani (RANI3) inicia nova fase de crescimento e BTG reforça recomendação de compra; veja motivos",
+      "summary": "O BTG Pactual vê com bons olhos a transição do plano de investimentos da Irani (RANI3), anunciada na última semana. Durante o Investor Day, a companhia apresentou a etapa final do ciclo Gaia (Gaia XII) e a aprovação estr",
+      "source": "Money Times",
+      "url": "https://www.moneytimes.com.br/irani-rani3-inicia-nova-fase-de-crescimento-e-btg-reforca-recomendacao-de-compra-veja-motivos-lmrs/",
+      "time": "2026-05-31T14:57:35Z",
+      "cat": "analise",
+      "tickers": []
+    },
+    {
+      "title": "O mercado de criptomoedas não tem botão de emergência. Então, até onde vai o Bitcoin (BTC)? Essas e outras notícias destaque no Crypto Times",
+      "summary": "Olá, investidor e investidora de cripto! Sejam muito bem-vindos a mais uma edição da nossa coluna semanal do Crypto Times, a editoria de criptomoedas do Money Times. Para se inscrever e receber em primeira mão em todas a",
+      "source": "Money Times",
+      "url": "https://www.moneytimes.com.br/o-mercado-de-criptomoedas-nao-tem-botao-de-emergencia-entao-ate-onde-vai-o-bitcoin-btc-essas-e-outras-noticias-destaque-no-crypto-times-rens/",
+      "time": "2026-05-31T14:00:00Z",
+      "cat": "cripto",
       "tickers": []
     },
     {
@@ -81,33 +135,6 @@
       "url": "https://www.moneytimes.com.br/wall-street-em-maximas-esquema-de-r-1-bilhao-em-propinas-na-receita-de-sp-e-mais-o-que-bombou-na-semana-lmrs/",
       "time": "2026-05-31T12:09:02Z",
       "cat": "internacional",
-      "tickers": []
-    },
-    {
-      "title": "Governo prorroga medidas contra alta dos combustíveis até final de julho",
-      "summary": "O governo do presidente Luiz Inácio Lula da Silva prorrogou até o final de julho medidas que buscam conter a alta dos preços dos combustíveis, incluindo subvenções e isenções de impostos que venceriam em 31 de maio, diss",
-      "source": "Money Times",
-      "url": "https://www.moneytimes.com.br/governo-prorroga-medidas-contra-alta-dos-combustiveis-ate-final-de-julho-lmrs/",
-      "time": "2026-05-31T11:27:04Z",
-      "cat": "acoes",
-      "tickers": []
-    },
-    {
-      "title": "Vale (VALE3) entra na carteira de dividendos da Ágora para junho; veja a seleção",
-      "summary": "A Ágora Investimentos realizou uma alteração na carteira recomendada mensal de dividendos. Para junho, as ações da Tim (TIMS3) deixam o portfólio, abrindo espaço para a entrada da Vale (VALE3). De acordo com os analistas",
-      "source": "Money Times",
-      "url": "https://www.moneytimes.com.br/vale-vale3-entra-em-carteira-de-dividendos-da-agora-para-junho-veja-a-selecao-lmrs/",
-      "time": "2026-05-31T11:12:55Z",
-      "cat": "fundos",
-      "tickers": []
-    },
-    {
-      "title": "Dividendo de 11,5%: FII ligado ao Banco do Brasil (BBAS3) mantém tese positiva, diz analista, que também aponta os riscos",
-      "summary": "O BB Investimentos manteve a visão positiva para o fundo imobiliário BB Renda Corporativa (BBRC11), destacando que o veículo segue com estrutura contratual sólida e geração de renda elevada. Em relatório, o analista Andr",
-      "source": "Money Times",
-      "url": "https://www.moneytimes.com.br/dividendo-de-115-fii-ligado-ao-banco-do-brasil-bbas3-mantem-tese-positiva-diz-analista-entenda-os-riscos-igdl/",
-      "time": "2026-05-30T16:00:00Z",
-      "cat": "fundos",
       "tickers": []
     },
     {
@@ -156,48 +183,48 @@
       "tickers": []
     },
     {
-      "title": "Paciente com suspeita de Ebola em São Paulo testa positivo para meningite; investigação continua",
-      "summary": "Paciente que esteve recentemente na República Democrática do Congo permanece internado em isolamento no Instituto Emílio Ribas",
+      "title": "Petrobras reduz preço do litro do diesel a distribuidoras em R$ 0,35",
+      "summary": "Estatal também volta a pagar PIS/Cofins sobre o combustível, que estavam isentos desde março",
       "source": "Exame",
-      "url": "https://exame.com/brasil/paciente-com-suspeita-de-ebola-em-sao-paulo-testa-positivo-para-meningite-investigacao-continua/",
-      "time": "2026-05-31T10:22:10Z",
+      "url": "https://exame.com/brasil/petrobras-reduz-preco-do-litro-do-diesel-a-distribuidoras-em-r-035/",
+      "time": "2026-05-31T17:53:18Z",
       "cat": "economia",
       "tickers": []
     },
     {
-      "title": "Mercado por Elas: 'Meu pai nunca se lembrou que eu era mulher'",
-      "summary": "Em um setor onde 90% das empresas são familiares e só 24% têm planejamento sucessório, mulheres assumem o comando sem mapa — e estão mudando o jogo",
+      "title": "Focus, petróleo e 'Payroll' ditam o tom em semana mais curta no Brasil",
+      "summary": "Decisão dos EUA de classificar facções criminosas do Brasil como organizações terroristas também segue no radar",
       "source": "Exame",
-      "url": "https://exame.com/invest/opina/mercado-por-elas-meu-pai-nunca-se-lembrou-que-eu-era-mulher/",
-      "time": "2026-05-31T10:00:44Z",
+      "url": "https://exame.com/invest/mercados/focus-petroleo-e-payroll-ditam-o-tom-em-semana-mais-curta-no-brasil/",
+      "time": "2026-05-31T17:03:19Z",
       "cat": "economia",
       "tickers": []
     },
     {
-      "title": "Com sócio americano, empresa brasileira de climatização mira os R$ 2 bilhões",
-      "summary": "Após a entrada do fundo americano GEF Capital, companhia acelera expansão física e fortalece rede de instaladores",
+      "title": "Resultado da eleição na Colômbia: veja os horários da apuração",
+      "summary": "País realiza primeiro turno da eleição presidencial neste domingo",
       "source": "Exame",
-      "url": "https://exame.com/negocios/com-socio-americano-empresa-brasileira-de-climatizacao-mira-os-r-2-bilhoes/",
-      "time": "2026-05-31T09:58:01Z",
+      "url": "https://exame.com/mundo/resultado-da-eleicao-na-colombia-veja-os-horarios-da-apuracao/",
+      "time": "2026-05-31T17:00:41Z",
       "cat": "economia",
       "tickers": []
     },
     {
-      "title": "Prazo para declaração anual do MEI termina neste domingo; multa mínima é de R$ 50",
-      "summary": "Todos os microempreendedores individuais que estiverem enquadrados no SIMEI em 2025 precisam enviar a DASN-Simei até este domingo, 31 de maio, mesmo sem faturamento no período",
-      "source": "Exame",
-      "url": "https://exame.com/invest/minhas-financas/prazo-para-declaracao-anual-do-mei-termina-neste-domingo-multa-minima-e-de-r-50/",
-      "time": "2026-05-31T09:46:56Z",
-      "cat": "economia",
+      "title": "Nvidia e AMD enfrentam novas restrições de exportação para subsidiárias chinesas",
+      "summary": "",
+      "source": "Investing.com",
+      "url": "https://br.investing.com/news/stock-market-news/nvidia-e-amd-enfrentam-novas-restricoes-de-exportacao-para-subsidiarias-chinesas-1957384",
+      "time": "2026-05-31T20:19:21Z",
+      "cat": "internacional",
       "tickers": []
     },
     {
-      "title": "Cientistas encontram forma de reativar regeneração de nervos humanos",
-      "summary": "Experimentos com miniaturas de cérebro e medula espinhal revelaram um mecanismo capaz de restaurar o crescimento de fibras nervosas danificadas",
-      "source": "Exame",
-      "url": "https://exame.com/ciencia/cientistas-encontram-forma-de-reativar-regeneracao-de-nervos-humanos/",
-      "time": "2026-05-31T09:07:14Z",
-      "cat": "economia",
+      "title": "Ações da Devon Energy sobem após oferta de US$ 8 bi por ativos no Marcellus",
+      "summary": "",
+      "source": "Investing.com",
+      "url": "https://br.investing.com/news/stock-market-news/acoes-da-devon-energy-sobem-apos-oferta-de-us-8-bi-por-ativos-no-marcellus-1957381",
+      "time": "2026-05-31T20:10:31Z",
+      "cat": "internacional",
       "tickers": []
     },
     {
@@ -235,43 +262,7 @@
       "time": "2026-05-31T11:45:09Z",
       "cat": "internacional",
       "tickers": []
-    },
-    {
-      "title": "Por que investidores podem precisar de uma abordagem mais dinâmica para suas carteiras",
-      "summary": "",
-      "source": "Investing.com",
-      "url": "https://br.investing.com/news/stock-market-news/por-que-investidores-podem-precisar-de-uma-abordagem-mais-dinamica-para-suas-carteiras-1957296",
-      "time": "2026-05-31T09:21:02Z",
-      "cat": "analise",
-      "tickers": []
-    },
-    {
-      "title": "Empreiteira saudita MGC busca até US$ 799 milhões em IPO em Riad",
-      "summary": "",
-      "source": "Investing.com",
-      "url": "https://br.investing.com/news/stock-market-news/empreiteira-saudita-mgc-busca-ate-us-799-milhoes-em-ipo-em-riad-1957274",
-      "time": "2026-05-31T07:21:32Z",
-      "cat": "internacional",
-      "tickers": []
-    },
-    {
-      "title": "O que a alta das passagens aéreas significa para o setor de cruzeiros?",
-      "summary": "",
-      "source": "Investing.com",
-      "url": "https://br.investing.com/news/stock-market-news/o-que-a-alta-das-passagens-aereas-significa-para-o-setor-de-cruzeiros-1957238",
-      "time": "2026-05-30T22:07:50Z",
-      "cat": "internacional",
-      "tickers": []
-    },
-    {
-      "title": "Rússia - Ações fecharam o pregão em queda e o Índice MOEX Russia Index terminou sem alterações",
-      "summary": "",
-      "source": "Investing.com",
-      "url": "https://br.investing.com/news/stock-market-news/russia--acoes-fecharam-o-pregao-em-queda-e-o-indice-moex-russia-index-terminou-sem-alteracoes-1957232",
-      "time": "2026-05-30T21:20:21Z",
-      "cat": "internacional",
-      "tickers": []
     }
   ],
-  "atualizado_em": "31/05/2026 13:47"
+  "atualizado_em": "31/05/2026 21:01"
 }
