@@ -1,249 +1,287 @@
 """
 Coletor Raio-X Corporativo — Convexa News
-Puxa dados financeiros de empresas listadas na B3 via Yahoo Finance.
-Calcula score de saúde: Dívida/EBITDA, Liquidez, Cobertura de Juros, Margem, FCF.
+Puxa dados fundamentalistas REAIS do Fundamentus (fonte: balanços CVM).
 Gera: raiox_corp.json
 """
 
 import json
 import sys
 import io
+import re
+import math
+import time
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
 from datetime import datetime
 
 try:
-    import yfinance as yf
-    HAS_YF = True
+    import requests
+    HAS_REQUESTS = True
 except ImportError:
-    HAS_YF = False
-    print("ERRO: yfinance não instalado. Rode: pip install yfinance")
+    HAS_REQUESTS = False
+    print("ERRO: requests não instalado.")
 
 # ==================== EMPRESAS B3 ====================
+# Apenas empresas operacionais (sem bancos, seguradoras — esses estão no Raio-X Bancário)
 EMPRESAS = {
     # Petróleo & Gás
-    'PETR4': {'nome': 'Petrobras', 'setor': 'Petróleo & Gás'},
-    'PRIO3': {'nome': 'PetroRio', 'setor': 'Petróleo & Gás'},
-    'RECV3': {'nome': 'PetroRecôncavo', 'setor': 'Petróleo & Gás'},
-    'CSAN3': {'nome': 'Cosan', 'setor': 'Petróleo & Gás'},
-    'UGPA3': {'nome': 'Ultrapar', 'setor': 'Petróleo & Gás'},
-    'VBBR3': {'nome': 'Vibra Energia', 'setor': 'Petróleo & Gás'},
-    'RAIZ4': {'nome': 'Raízen', 'setor': 'Energia / Agro'},
+    'PETR4': 'Petrobras',
+    'PRIO3': 'PetroRio',
+    'RECV3': 'PetroRecôncavo',
+    'CSAN3': 'Cosan',
+    'UGPA3': 'Ultrapar',
+    'VBBR3': 'Vibra Energia',
+    'RAIZ4': 'Raízen',
     # Mineração & Siderurgia
-    'VALE3': {'nome': 'Vale', 'setor': 'Mineração'},
-    'CSNA3': {'nome': 'CSN', 'setor': 'Siderurgia'},
-    'GGBR4': {'nome': 'Gerdau', 'setor': 'Siderurgia'},
-    'USIM5': {'nome': 'Usiminas', 'setor': 'Siderurgia'},
-    'GOAU4': {'nome': 'Metalúrgica Gerdau', 'setor': 'Siderurgia'},
-    # Bancos removidos — já estão no Raio-X Bancário (balanço diferente)
+    'VALE3': 'Vale',
+    'CSNA3': 'CSN',
+    'GGBR4': 'Gerdau',
+    'USIM5': 'Usiminas',
     # Energia Elétrica
-    'ELET3': {'nome': 'Eletrobras', 'setor': 'Energia Elétrica'},
-    'CPFE3': {'nome': 'CPFL Energia', 'setor': 'Energia Elétrica'},
-    'ENGI11': {'nome': 'Energisa', 'setor': 'Energia Elétrica'},
-    'EGIE3': {'nome': 'Engie Brasil', 'setor': 'Energia Elétrica'},
-    'TAEE11': {'nome': 'Taesa', 'setor': 'Energia Elétrica'},
-    'ENEV3': {'nome': 'Eneva', 'setor': 'Energia Elétrica'},
-    'CMIG4': {'nome': 'Cemig', 'setor': 'Energia Elétrica'},
-    'EQTL3': {'nome': 'Equatorial', 'setor': 'Energia Elétrica'},
-    'NEOE3': {'nome': 'Neoenergia', 'setor': 'Energia Elétrica'},
-    'SBSP3': {'nome': 'Sabesp', 'setor': 'Saneamento'},
+    'ELET3': 'Eletrobras',
+    'CPFE3': 'CPFL Energia',
+    'ENGI11': 'Energisa',
+    'EGIE3': 'Engie Brasil',
+    'TAEE11': 'Taesa',
+    'ENEV3': 'Eneva',
+    'CMIG4': 'Cemig',
+    'EQTL3': 'Equatorial',
+    'NEOE3': 'Neoenergia',
+    'SBSP3': 'Sabesp',
     # Varejo & Consumo
-    'MGLU3': {'nome': 'Magazine Luiza', 'setor': 'Varejo'},
-    'LREN3': {'nome': 'Lojas Renner', 'setor': 'Varejo'},
-    'ARZZ3': {'nome': 'Arezzo', 'setor': 'Varejo'},
-    'PETZ3': {'nome': 'Petz', 'setor': 'Varejo'},
-    'GMAT3': {'nome': 'Grupo Mateus', 'setor': 'Varejo'},
-    'ABEV3': {'nome': 'Ambev', 'setor': 'Bebidas'},
-    # Frigoríficos
-    'JBSS3': {'nome': 'JBS', 'setor': 'Frigoríficos'},
-    'MRFG3': {'nome': 'Marfrig', 'setor': 'Frigoríficos'},
-    'BEEF3': {'nome': 'Minerva Foods', 'setor': 'Frigoríficos'},
-    'BRFS3': {'nome': 'BRF', 'setor': 'Alimentos'},
+    'MGLU3': 'Magazine Luiza',
+    'LREN3': 'Lojas Renner',
+    'ARZZ3': 'Arezzo',
+    'PETZ3': 'Petz',
+    'GMAT3': 'Grupo Mateus',
+    'ABEV3': 'Ambev',
+    # Frigoríficos & Alimentos
+    'JBSS3': 'JBS',
+    'MRFG3': 'Marfrig',
+    'BEEF3': 'Minerva Foods',
+    'BRFS3': 'BRF',
     # Saúde
-    'RDOR3': {'nome': 'Rede D\'Or', 'setor': 'Saúde'},
-    'HAPV3': {'nome': 'Hapvida', 'setor': 'Saúde'},
-    'FLRY3': {'nome': 'Fleury', 'setor': 'Saúde'},
-    'RADL3': {'nome': 'Raia Drogasil', 'setor': 'Saúde'},
+    'RDOR3': 'Rede D\'Or',
+    'HAPV3': 'Hapvida',
+    'FLRY3': 'Fleury',
+    'RADL3': 'Raia Drogasil',
     # Construção
-    'CYRE3': {'nome': 'Cyrela', 'setor': 'Construção'},
-    'MRVE3': {'nome': 'MRV', 'setor': 'Construção'},
-    'EZTC3': {'nome': 'EZTEC', 'setor': 'Construção'},
-    'DIRR3': {'nome': 'Direcional', 'setor': 'Construção'},
+    'CYRE3': 'Cyrela',
+    'MRVE3': 'MRV',
+    'EZTC3': 'EZTEC',
+    'DIRR3': 'Direcional',
     # Logística & Transporte
-    'RAIL3': {'nome': 'Rumo', 'setor': 'Logística'},
-    'EMBR3': {'nome': 'Embraer', 'setor': 'Aeroespacial'},
-    'RENT3': {'nome': 'Localiza', 'setor': 'Locação'},
-    'MOVI3': {'nome': 'Movida', 'setor': 'Locação'},
+    'RAIL3': 'Rumo',
+    'EMBR3': 'Embraer',
+    'RENT3': 'Localiza',
+    'MOVI3': 'Movida',
     # Papel & Celulose
-    'SUZB3': {'nome': 'Suzano', 'setor': 'Papel & Celulose'},
-    'KLBN11': {'nome': 'Klabin', 'setor': 'Papel & Celulose'},
+    'SUZB3': 'Suzano',
+    'KLBN11': 'Klabin',
     # Tecnologia
-    'TOTS3': {'nome': 'Totvs', 'setor': 'Tecnologia'},
-    'LWSA3': {'nome': 'Locaweb', 'setor': 'Tecnologia'},
-    # Telecomunicação
-    'VIVT3': {'nome': 'Vivo', 'setor': 'Telecom'},
-    'TIMS3': {'nome': 'TIM', 'setor': 'Telecom'},
+    'TOTS3': 'Totvs',
+    'LWSA3': 'Locaweb',
+    # Telecom
+    'VIVT3': 'Vivo',
+    'TIMS3': 'TIM',
     # Industrial
-    'WEGE3': {'nome': 'WEG', 'setor': 'Industrial'},
+    'WEGE3': 'WEG',
     # Agro
-    'SLCE3': {'nome': 'SLC Agrícola', 'setor': 'Agro'},
-    'SMTO3': {'nome': 'São Martinho', 'setor': 'Agro'},
+    'SLCE3': 'SLC Agrícola',
+    'SMTO3': 'São Martinho',
     # Educação
-    'COGN3': {'nome': 'Cogna', 'setor': 'Educação'},
-    'YDUQ3': {'nome': 'Yduqs', 'setor': 'Educação'},
+    'COGN3': 'Cogna',
+    'YDUQ3': 'Yduqs',
     # Shopping
-    'MULT3': {'nome': 'Multiplan', 'setor': 'Shopping'},
-    'IGTI11': {'nome': 'Iguatemi', 'setor': 'Shopping'},
-    # Seguradoras/financeiras removidas — balanço diferente de empresa operacional
-    'CIEL3': {'nome': 'Cielo', 'setor': 'Meios de Pagamento'},
+    'MULT3': 'Multiplan',
+    'IGTI11': 'Iguatemi',
+    # Meios de Pagamento
+    'CIEL3': 'Cielo',
+}
+
+# Mapeamento de setores
+SETORES = {
+    'PETR4':'Petróleo & Gás','PRIO3':'Petróleo & Gás','RECV3':'Petróleo & Gás',
+    'CSAN3':'Petróleo & Gás','UGPA3':'Petróleo & Gás','VBBR3':'Petróleo & Gás','RAIZ4':'Energia / Agro',
+    'VALE3':'Mineração','CSNA3':'Siderurgia','GGBR4':'Siderurgia','USIM5':'Siderurgia',
+    'ELET3':'Energia Elétrica','CPFE3':'Energia Elétrica','ENGI11':'Energia Elétrica',
+    'EGIE3':'Energia Elétrica','TAEE11':'Energia Elétrica','ENEV3':'Energia Elétrica',
+    'CMIG4':'Energia Elétrica','EQTL3':'Energia Elétrica','NEOE3':'Energia Elétrica','SBSP3':'Saneamento',
+    'MGLU3':'Varejo','LREN3':'Varejo','ARZZ3':'Varejo','PETZ3':'Varejo','GMAT3':'Varejo','ABEV3':'Bebidas',
+    'JBSS3':'Frigoríficos','MRFG3':'Frigoríficos','BEEF3':'Frigoríficos','BRFS3':'Alimentos',
+    'RDOR3':'Saúde','HAPV3':'Saúde','FLRY3':'Saúde','RADL3':'Saúde',
+    'CYRE3':'Construção','MRVE3':'Construção','EZTC3':'Construção','DIRR3':'Construção',
+    'RAIL3':'Logística','EMBR3':'Aeroespacial','RENT3':'Locação','MOVI3':'Locação',
+    'SUZB3':'Papel & Celulose','KLBN11':'Papel & Celulose',
+    'TOTS3':'Tecnologia','LWSA3':'Tecnologia',
+    'VIVT3':'Telecom','TIMS3':'Telecom',
+    'WEGE3':'Industrial',
+    'SLCE3':'Agro','SMTO3':'Agro',
+    'COGN3':'Educação','YDUQ3':'Educação',
+    'MULT3':'Shopping','IGTI11':'Shopping',
+    'CIEL3':'Meios de Pagamento',
 }
 
 
-def safe_get(series, key, default=None):
-    """Extrai valor de um pandas Series/dict de forma segura."""
+def parse_number(text):
+    """Converte texto brasileiro pra número: '1.234.567' -> 1234567, '24,2%' -> 24.2"""
+    if not text or text == '-':
+        return None
+    text = text.strip().replace('%', '').replace('.', '').replace(',', '.')
     try:
-        val = series.get(key, default)
-        if val is None:
-            return default
-        return float(val)
-    except Exception:
-        return default
-
-
-def analisar_empresa(ticker):
-    """Analisa saúde financeira de uma empresa via Yahoo Finance."""
-    yf_ticker = ticker + '.SA'
-    info = EMPRESAS[ticker]
-
-    try:
-        t = yf.Ticker(yf_ticker)
-
-        # Dados financeiros
-        bs = t.balance_sheet
-        inc = t.income_stmt
-        cf = t.cashflow
-
-        if bs is None or bs.empty or inc is None or inc.empty:
-            return None
-
-        # Último período disponível
-        bs_last = bs.iloc[:, 0]
-        inc_last = inc.iloc[:, 0]
-        cf_last = cf.iloc[:, 0] if cf is not None and not cf.empty else {}
-
-        # === INDICADORES ===
-
-        # Dívida total
-        divida_curto = safe_get(bs_last, 'Current Debt', 0) or safe_get(bs_last, 'Current Debt And Capital Lease Obligation', 0)
-        divida_longo = safe_get(bs_last, 'Long Term Debt', 0) or safe_get(bs_last, 'Long Term Debt And Capital Lease Obligation', 0)
-        divida_total = (divida_curto or 0) + (divida_longo or 0)
-
-        # Caixa
-        caixa = safe_get(bs_last, 'Cash And Cash Equivalents', 0) or safe_get(bs_last, 'Cash Cash Equivalents And Short Term Investments', 0)
-
-        # Dívida Líquida
-        divida_liquida = divida_total - (caixa or 0)
-
-        # EBITDA
-        ebitda = safe_get(inc_last, 'EBITDA', 0) or safe_get(inc_last, 'Normalized EBITDA', 0)
-
-        # Receita
-        receita = safe_get(inc_last, 'Total Revenue', 0)
-
-        # Lucro Operacional (EBIT)
-        ebit = safe_get(inc_last, 'EBIT', 0) or safe_get(inc_last, 'Operating Income', 0)
-
-        # Despesa com juros
-        juros = abs(safe_get(inc_last, 'Interest Expense', 0) or safe_get(inc_last, 'Net Interest Income', 0) or 1)
-
-        # Ativo Circulante / Passivo Circulante
-        ativo_circ = safe_get(bs_last, 'Current Assets', 0)
-        passivo_circ = safe_get(bs_last, 'Current Liabilities', 0)
-
-        # Patrimônio Líquido
-        pl = safe_get(bs_last, 'Stockholders Equity', 0) or safe_get(bs_last, 'Total Equity Gross Minority Interest', 0)
-
-        # Free Cash Flow
-        fcf = safe_get(cf_last, 'Free Cash Flow', 0)
-
-        # Lucro Líquido
-        lucro = safe_get(inc_last, 'Net Income', 0)
-
-        # === CÁLCULOS ===
-
-        # Dívida Líquida / EBITDA (limitar a valores razoáveis)
-        div_ebitda = round(divida_liquida / ebitda, 2) if ebitda and ebitda > 0 else None
-        if div_ebitda is not None and (div_ebitda > 50 or div_ebitda < -50):
-            div_ebitda = None  # valor absurdo = dado inconsistente
-
-        # Liquidez Corrente
-        liq_corrente = round(ativo_circ / passivo_circ, 2) if passivo_circ and passivo_circ > 0 else None
-
-        # Cobertura de Juros (EBIT / Juros) — limitar absurdos
-        cob_juros = round(ebit / juros, 2) if juros and juros > 0 and ebit else None
-        if cob_juros is not None and (cob_juros > 100 or cob_juros < -100):
-            cob_juros = None  # dado inconsistente
-
-        # Margem EBITDA
-        margem_ebitda = round((ebitda / receita) * 100, 1) if receita and receita > 0 and ebitda else None
-
-        # ROE
-        roe = round((lucro / pl) * 100, 1) if pl and pl > 0 and lucro else None
-
-        # Endividamento (Dívida / PL)
-        endividamento = round(divida_total / pl, 2) if pl and pl > 0 else None
-
-        # Market Cap
-        try:
-            mkt_cap = t.fast_info.market_cap or 0
-        except Exception:
-            mkt_cap = 0
-
-        return {
-            'ticker': ticker,
-            'nome': info['nome'],
-            'setor': info['setor'],
-            'div_ebitda': div_ebitda,
-            'liq_corrente': liq_corrente,
-            'cob_juros': cob_juros,
-            'margem_ebitda': margem_ebitda,
-            'roe': roe,
-            'endividamento': endividamento,
-            'divida_liquida': divida_liquida,
-            'caixa': caixa or 0,
-            'ebitda': ebitda or 0,
-            'fcf': fcf or 0,
-            'patrimonio_liquido': pl or 0,
-            'market_cap': mkt_cap,
-        }
-
-    except Exception as e:
-        print(f"    Erro {ticker}: {e}")
+        return float(text)
+    except ValueError:
         return None
 
 
+def fetch_fundamentus(ticker):
+    """Busca dados fundamentalistas de um ticker no Fundamentus."""
+    url = f'https://www.fundamentus.com.br/detalhes.php?papel={ticker}'
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+
+    try:
+        resp = requests.get(url, headers=headers, timeout=15)
+        resp.encoding = 'latin1'
+        html = resp.text
+
+        # Extrair todos os pares label/valor
+        cells = re.findall(
+            r'<td[^>]*class="label[^"]*"[^>]*>(.*?)</td>\s*<td[^>]*class="data[^"]*"[^>]*>(.*?)</td>',
+            html, re.DOTALL
+        )
+
+        dados = {}
+        for label, val in cells:
+            label = re.sub(r'<[^>]+>', '', label).strip()
+            val = re.sub(r'<[^>]+>', '', val).strip()
+            # Remover caracteres invisíveis (BOM, ?, etc) do início
+            label = re.sub(r'^[?\x00-\x1f﻿]+', '', label).strip()
+            dados[label] = val
+
+        return dados
+
+    except Exception as e:
+        print(f"    Erro HTTP: {e}")
+        return None
+
+
+def analisar_empresa(ticker):
+    """Analisa saúde financeira com dados do Fundamentus."""
+    nome = EMPRESAS.get(ticker, ticker)
+    setor = SETORES.get(ticker, '')
+
+    dados = fetch_fundamentus(ticker)
+    if not dados:
+        return None
+
+    # Buscar indicadores por chave parcial (evita problemas de encoding)
+    def buscar(chave_parcial):
+        for k, v in dados.items():
+            if chave_parcial.lower() in k.lower():
+                return v
+        return None
+
+    ev_ebitda = parse_number(buscar('EV / EBITDA'))
+    liq_corrente = parse_number(buscar('Liquidez Corr'))
+    roe = parse_number(buscar('ROE'))
+    margem_ebit = parse_number(buscar('Marg. EBIT'))
+    # Margem Líquida: procurar label que contenha "Marg" E "quida"
+    margem_liq = None
+    for k, v in dados.items():
+        if 'Marg' in k and 'quida' in k:
+            margem_liq = parse_number(v)
+            break
+    div_liq_patrim = parse_number(buscar('q / Patrim'))
+    roic = parse_number(buscar('ROIC'))
+    div_yield = parse_number(buscar('Div. Yield'))
+    pl_ratio = parse_number(buscar('P/L'))
+    pvp = parse_number(buscar('P/VP'))
+
+    # Valores absolutos
+    div_bruta = parse_number(buscar('v. Bruta'))
+    div_liquida = parse_number(buscar('v. L'))  # Dív. Líquida
+    # Patrimônio Líquido: buscar label que começa com "Patrim"
+    patrim_liq = None
+    for k, v in dados.items():
+        if k.startswith('Patrim') or (len(k) > 3 and 'Patrim' in k and '/' not in k):
+            patrim_liq = parse_number(v)
+            break
+    valor_mercado = parse_number(buscar('Valor de mercado'))
+    ebit_val = buscar('EBIT')
+    ebit = parse_number(ebit_val) if ebit_val and 'EBITDA' not in str(ebit_val) else None
+    # EBIT aparece 2x (anual e trimestral), pegar o primeiro
+    for k, v in dados.items():
+        if 'EBIT' in k and 'EBITDA' not in k and 'Ativo' not in k:
+            ebit = parse_number(v)
+            break
+    lucro = parse_number(buscar('Lucro'))
+    receita = parse_number(buscar('Receita'))
+    disponibilidades = parse_number(buscar('Disponibilidades'))
+    ult_balanco = buscar('lt balan') or ''
+
+    # EV/EBITDA é a melhor proxy para Dív/EBITDA no Fundamentus
+    # Limitar valores absurdos
+    if ev_ebitda is not None and (ev_ebitda > 50 or ev_ebitda < -10):
+        ev_ebitda = None
+
+    # Calcular cobertura de juros aproximada
+    # EBIT / Despesa Financeira. Fundamentus não dá juros direto,
+    # mas podemos estimar: se div_liq_patrim e EBIT existem
+    cob_juros = None
+    if ebit and div_bruta and div_bruta > 0:
+        # Estimar juros como ~12% da dívida bruta (taxa média BR)
+        juros_estimados = div_bruta * 0.12
+        if juros_estimados > 0:
+            cob_juros = round(ebit / juros_estimados, 2)
+            if cob_juros > 100 or cob_juros < -100:
+                cob_juros = None
+
+    return {
+        'ticker': ticker,
+        'nome': nome,
+        'setor': setor,
+        'ev_ebitda': round(ev_ebitda, 2) if ev_ebitda else None,
+        'liq_corrente': round(liq_corrente, 2) if liq_corrente else None,
+        'cob_juros': cob_juros,
+        'margem_ebit': round(margem_ebit, 1) if margem_ebit else None,
+        'margem_liquida': round(margem_liq, 1) if margem_liq else None,
+        'roe': round(roe, 1) if roe else None,
+        'roic': round(roic, 1) if roic else None,
+        'div_liq_patrim': round(div_liq_patrim, 2) if div_liq_patrim else None,
+        'div_yield': round(div_yield, 1) if div_yield else None,
+        'div_bruta': div_bruta,
+        'div_liquida': div_liquida,
+        'disponibilidades': disponibilidades,
+        'patrimonio_liquido': patrim_liq,
+        'valor_mercado': valor_mercado,
+        'ult_balanco': ult_balanco,
+        # Renomear pra manter compatibilidade com o frontend
+        'div_ebitda': round(ev_ebitda, 2) if ev_ebitda else None,
+    }
+
+
 def calcular_score(emp):
-    """Calcula score de saúde corporativa (0-100)."""
+    """Calcula score de saúde corporativa (0-100) com dados do Fundamentus."""
     score = 0
 
-    # Dívida/EBITDA (30 pontos) — menor é melhor
-    de = emp.get('div_ebitda')
+    # EV/EBITDA (30 pontos) — menor é melhor
+    de = emp.get('ev_ebitda')
     if de is not None:
         if de < 0:
-            score += 30  # dívida negativa = mais caixa que dívida
-        elif de <= 1:
-            score += 28
-        elif de <= 2:
-            score += 22
+            score += 5   # negativo = empresa com prejuízo operacional ou dívida líq negativa
         elif de <= 3:
-            score += 15
-        elif de <= 4:
-            score += 8
+            score += 30
         elif de <= 5:
-            score += 3
-        # acima de 5 = 0 pontos
+            score += 24
+        elif de <= 7:
+            score += 18
+        elif de <= 10:
+            score += 10
+        elif de <= 15:
+            score += 5
+        # acima de 15 = 0
     else:
-        score += 12  # dado ausente = pontuação neutra
+        score += 12  # dado ausente = neutro
 
     # Liquidez Corrente (20 pontos)
     lc = emp.get('liq_corrente')
@@ -252,52 +290,75 @@ def calcular_score(emp):
             score += 20
         elif lc >= 1.5:
             score += 16
+        elif lc >= 1.2:
+            score += 12
         elif lc >= 1.0:
-            score += 10
+            score += 8
         elif lc >= 0.8:
-            score += 5
+            score += 4
         # abaixo de 0.8 = 0
     else:
-        score += 8  # dado ausente = pontuação neutra
+        score += 8
 
-    # Cobertura de Juros (20 pontos)
+    # Cobertura de Juros estimada (15 pontos)
     cj = emp.get('cob_juros')
     if cj is not None:
         if cj >= 5:
-            score += 20
+            score += 15
         elif cj >= 3:
-            score += 15
-        elif cj >= 1.5:
-            score += 10
-        elif cj >= 1:
-            score += 5
-        # abaixo de 1 = 0
-    else:
-        score += 8  # dado ausente = pontuação neutra
-
-    # Margem EBITDA (15 pontos)
-    me = emp.get('margem_ebitda')
-    if me is not None:
-        if me >= 30:
-            score += 15
-        elif me >= 20:
             score += 12
-        elif me >= 10:
+        elif cj >= 1.5:
             score += 8
-        elif me >= 5:
+        elif cj >= 1:
             score += 4
-        # abaixo de 5% = 0
     else:
-        score += 6  # dado ausente = pontuação neutra
+        score += 6
 
-    # Free Cash Flow positivo (15 pontos)
-    fcf = emp.get('fcf', 0)
-    if fcf and fcf > 0:
-        score += 15
-    elif fcf and fcf > -1e8:
-        score += 5
-    elif not fcf:
-        score += 6  # dado ausente = pontuação neutra
+    # Margem EBIT (15 pontos)
+    me = emp.get('margem_ebit')
+    if me is not None:
+        if me >= 25:
+            score += 15
+        elif me >= 15:
+            score += 12
+        elif me >= 8:
+            score += 8
+        elif me >= 3:
+            score += 4
+        elif me < 0:
+            score += 0  # margem negativa = prejuízo operacional
+    else:
+        score += 6
+
+    # ROE (10 pontos)
+    roe = emp.get('roe')
+    if roe is not None:
+        if roe >= 20:
+            score += 10
+        elif roe >= 12:
+            score += 8
+        elif roe >= 5:
+            score += 5
+        elif roe >= 0:
+            score += 2
+        # negativo = 0
+    else:
+        score += 4
+
+    # Endividamento Dív Líq / Patrimônio (10 pontos) — menor é melhor
+    dlp = emp.get('div_liq_patrim')
+    if dlp is not None:
+        if dlp < 0:
+            score += 10  # dívida líquida negativa = mais caixa que dívida
+        elif dlp <= 0.5:
+            score += 8
+        elif dlp <= 1.0:
+            score += 6
+        elif dlp <= 2.0:
+            score += 3
+        # acima de 2 = 0
+    else:
+        score += 4
 
     return min(score, 100)
 
@@ -312,42 +373,38 @@ def semaforo(score):
 
 # ==================== MAIN ====================
 def main():
-    if not HAS_YF:
+    if not HAS_REQUESTS:
         return
 
     print("=" * 60)
     print("  RAIO-X CORPORATIVO — Convexa News")
+    print("  Fonte: Fundamentus (Balanços CVM)")
     print("=" * 60)
     print(f"\n  Analisando {len(EMPRESAS)} empresas...\n")
 
     resultados = []
     erros = 0
 
-    for ticker, info in EMPRESAS.items():
-        print(f"  {ticker} ({info['nome']})...", end=' ')
+    for ticker, nome in EMPRESAS.items():
+        print(f"  {ticker} ({nome})...", end=' ', flush=True)
         emp = analisar_empresa(ticker)
         if emp:
             emp['score'] = calcular_score(emp)
             emp['situacao'] = semaforo(emp['score'])
             resultados.append(emp)
-            de_str = f"{emp['div_ebitda']:.1f}x" if emp['div_ebitda'] is not None else '—'
-            print(f"Score: {emp['score']} | Dív/EBITDA: {de_str} | {emp['situacao'].upper()}")
+            ev_str = f"{emp['ev_ebitda']:.1f}x" if emp.get('ev_ebitda') is not None else '—'
+            lc_str = f"{emp['liq_corrente']:.2f}" if emp.get('liq_corrente') is not None else '—'
+            print(f"Score: {emp['score']} | EV/EBITDA: {ev_str} | Liq: {lc_str} | {emp['situacao'].upper()}")
         else:
             erros += 1
             print("FALHOU")
 
-    # Ordenar por score (pior primeiro pra chamar atenção)
+        time.sleep(0.5)  # Respeitar o servidor
+
+    # Ordenar por score (pior primeiro)
     resultados.sort(key=lambda x: x['score'])
 
-    dados = {
-        'atualizado_em': datetime.now().strftime('%d/%m/%Y %H:%M'),
-        'fonte': 'Yahoo Finance (Balanços CVM)',
-        'total': len(resultados),
-        'empresas': resultados,
-    }
-
-    # Limpar NaN/Infinity que quebram JSON no browser
-    import math
+    # Limpar NaN/Infinity
     def limpar_nan(obj):
         if isinstance(obj, dict):
             return {k: limpar_nan(v) for k, v in obj.items()}
@@ -357,20 +414,29 @@ def main():
             return None
         return obj
 
-    dados = limpar_nan(dados)
+    dados = limpar_nan({
+        'atualizado_em': datetime.now().strftime('%d/%m/%Y %H:%M'),
+        'fonte': 'Fundamentus (Balanços CVM)',
+        'total': len(resultados),
+        'empresas': resultados,
+    })
 
     with open('raiox_corp.json', 'w', encoding='utf-8') as f:
         json.dump(dados, f, ensure_ascii=False, indent=2)
 
     print(f"\n  raiox_corp.json salvo — {len(resultados)} empresas ({erros} erros)")
 
-    # Alertas
+    # Resumo
+    verdes = [e for e in resultados if e['situacao'] == 'verde']
+    amarelos = [e for e in resultados if e['situacao'] == 'amarelo']
     vermelhos = [e for e in resultados if e['situacao'] == 'vermelho']
+    print(f"\n  Saudável: {len(verdes)} | Atenção: {len(amarelos)} | Risco: {len(vermelhos)}")
+
     if vermelhos:
-        print(f"\n  ⚠️  ALERTAS DE RISCO ({len(vermelhos)} empresas):")
+        print(f"\n  ALERTAS DE RISCO:")
         for e in vermelhos:
-            de_str = f"{e['div_ebitda']:.1f}x" if e['div_ebitda'] is not None else '—'
-            print(f"     🔴 {e['ticker']} ({e['nome']}) — Score {e['score']} | Dív/EBITDA: {de_str}")
+            ev_str = f"{e['ev_ebitda']:.1f}x" if e.get('ev_ebitda') is not None else '—'
+            print(f"     {e['ticker']} ({e['nome']}) — Score {e['score']} | EV/EBITDA: {ev_str}")
 
     print("\n  Concluído!")
 
