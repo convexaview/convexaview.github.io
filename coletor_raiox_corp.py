@@ -35,11 +35,7 @@ EMPRESAS = {
     'GGBR4': {'nome': 'Gerdau', 'setor': 'Siderurgia'},
     'USIM5': {'nome': 'Usiminas', 'setor': 'Siderurgia'},
     'GOAU4': {'nome': 'Metalúrgica Gerdau', 'setor': 'Siderurgia'},
-    # Bancos (já tem no Raio-X Bancário, mas útil pra debêntures)
-    'ITUB4': {'nome': 'Itaú Unibanco', 'setor': 'Bancos'},
-    'BBDC4': {'nome': 'Bradesco', 'setor': 'Bancos'},
-    'BBAS3': {'nome': 'Banco do Brasil', 'setor': 'Bancos'},
-    'SANB11': {'nome': 'Santander Brasil', 'setor': 'Bancos'},
+    # Bancos removidos — já estão no Raio-X Bancário (balanço diferente)
     # Energia Elétrica
     'ELET3': {'nome': 'Eletrobras', 'setor': 'Energia Elétrica'},
     'CPFE3': {'nome': 'CPFL Energia', 'setor': 'Energia Elétrica'},
@@ -89,7 +85,6 @@ EMPRESAS = {
     'TIMS3': {'nome': 'TIM', 'setor': 'Telecom'},
     # Industrial
     'WEGE3': {'nome': 'WEG', 'setor': 'Industrial'},
-    'B3SA3': {'nome': 'B3', 'setor': 'Bolsa'},
     # Agro
     'SLCE3': {'nome': 'SLC Agrícola', 'setor': 'Agro'},
     'SMTO3': {'nome': 'São Martinho', 'setor': 'Agro'},
@@ -99,9 +94,7 @@ EMPRESAS = {
     # Shopping
     'MULT3': {'nome': 'Multiplan', 'setor': 'Shopping'},
     'IGTI11': {'nome': 'Iguatemi', 'setor': 'Shopping'},
-    # Seguros / Financeiro
-    'BBSE3': {'nome': 'BB Seguridade', 'setor': 'Seguros'},
-    'PSSA3': {'nome': 'Porto Seguro', 'setor': 'Seguros'},
+    # Seguradoras/financeiras removidas — balanço diferente de empresa operacional
     'CIEL3': {'nome': 'Cielo', 'setor': 'Meios de Pagamento'},
 }
 
@@ -178,14 +171,18 @@ def analisar_empresa(ticker):
 
         # === CÁLCULOS ===
 
-        # Dívida Líquida / EBITDA
+        # Dívida Líquida / EBITDA (limitar a valores razoáveis)
         div_ebitda = round(divida_liquida / ebitda, 2) if ebitda and ebitda > 0 else None
+        if div_ebitda is not None and (div_ebitda > 50 or div_ebitda < -50):
+            div_ebitda = None  # valor absurdo = dado inconsistente
 
         # Liquidez Corrente
         liq_corrente = round(ativo_circ / passivo_circ, 2) if passivo_circ and passivo_circ > 0 else None
 
-        # Cobertura de Juros (EBIT / Juros)
+        # Cobertura de Juros (EBIT / Juros) — limitar absurdos
         cob_juros = round(ebit / juros, 2) if juros and juros > 0 and ebit else None
+        if cob_juros is not None and (cob_juros > 100 or cob_juros < -100):
+            cob_juros = None  # dado inconsistente
 
         # Margem EBITDA
         margem_ebitda = round((ebitda / receita) * 100, 1) if receita and receita > 0 and ebitda else None
