@@ -25,44 +25,18 @@ IND_BASILEIA = 79664       # Índice de Basileia (decimal, multiplicar por 100)
 IND_IMOBILIZACAO = 79662   # Índice de Imobilização (decimal)
 IND_PL = 141836            # Patrimônio Líquido (R$ mil)
 
-# Ratings de crédito — VERIFICADOS nas páginas oficiais de RI e agências
-# Apenas ratings confirmados em fontes oficiais. Sem rating = não mostrar.
-RATINGS = {
-    # Verificado: ri.bb.com.br/ratings (Mar/2026)
-    'Banco do Brasil':    {'moodys': 'Ba1', 'fitch': 'BB', 'sp': 'BB', 'perspectiva': 'Estável', 'agencia_ref': "Fonte: RI Banco do Brasil (Mar/2026)"},
-    # Verificado: Moody's (Jun/2025) + Fitch (Dez/2025)
-    'Itaú Unibanco':      {'moodys': 'Ba1', 'fitch': 'BB+', 'sp': '', 'perspectiva': 'Estável', 'agencia_ref': "Moody's (Jun/2025), Fitch (Dez/2025)"},
-    # Verificado: Fitch (Dez/2025) BB+ Estável, Moody's Ba1
-    'Bradesco':           {'moodys': 'Ba1', 'fitch': 'BB+', 'sp': '', 'perspectiva': 'Estável', 'agencia_ref': "Fitch (Dez/2025), Moody's"},
-    # Verificado: Moody's upgrade Out/2025
-    'Santander Brasil':   {'moodys': 'Ba1', 'fitch': '', 'sp': '', 'perspectiva': 'Estável', 'agencia_ref': "Moody's (Out/2025)"},
-    # Verificado: Moody's upgrade Out/2025
-    'Caixa Econômica':    {'moodys': 'Ba1', 'fitch': '', 'sp': '', 'perspectiva': 'Estável', 'agencia_ref': "Moody's (Out/2025)"},
-    # Verificado: Moody's + Fitch (Mar/2026 upgrade)
-    'BTG Pactual':        {'moodys': 'Ba1', 'fitch': 'BB+', 'sp': '', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025), Fitch (Mar/2026)"},
-    # Verificado: Moody's upgrade Out/2025
-    'Safra':              {'moodys': 'Ba1', 'fitch': '', 'sp': '', 'perspectiva': 'Estável', 'agencia_ref': "Moody's (Out/2025)"},
-    # Verificado: investidores.nu/ratings
-    'Nubank':             {'moodys': 'Ba1', 'fitch': '', 'sp': 'BB', 'perspectiva': 'Estável', 'agencia_ref': "Moody's Ba1 + S&P BB (investidores.nu)"},
-    # Verificado: investors.inter.co/ratings — Moody's Local AA+ Positiva
-    'Inter':              {'moodys': 'AA+.br', 'fitch': '', 'sp': 'AA+ Nacional', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's Local + S&P Nacional (investors.inter.co)"},
-    # Verificado: Moody's upgrade Out/2025
-    'Sicredi':            {'moodys': 'Ba1', 'fitch': '', 'sp': '', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025)"},
-    # Verificado: Moody's upgrade Out/2025
-    'ABC Brasil':         {'moodys': 'Ba1', 'fitch': '', 'sp': '', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025)"},
-    # Verificado: Moody's upgrade Out/2025
-    'Daycoval':           {'moodys': 'Ba1', 'fitch': '', 'sp': '', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025)"},
-    # Verificado: Moody's upgrade Out/2025
-    'Banco do Nordeste':  {'moodys': 'Ba1', 'fitch': '', 'sp': '', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025)"},
-    # Verificado: Moody's upgrade Out/2025
-    'Banco da Amazônia':  {'moodys': 'Ba1', 'fitch': '', 'sp': '', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025)"},
-    # Verificado: ri.banrisul.com.br/ratings
-    'Banrisul':           {'moodys': 'Ba3', 'fitch': 'BB-', 'sp': 'BB-', 'perspectiva': 'Positiva/Estável', 'agencia_ref': "RI Banrisul (Moody's Ba3/Pos, Fitch BB-/Est, S&P BB-/Est)"},
-    # Verificado: Fitch B+ Estável
-    'BMG':                {'moodys': '', 'fitch': 'B+', 'sp': '', 'perspectiva': 'Estável', 'agencia_ref': "Fitch (B+ Estável)"},
-    # Verificado: Moody's upgrade Out/2025
-    'Votorantim':         {'moodys': 'Ba1', 'fitch': '', 'sp': '', 'perspectiva': 'Estável', 'agencia_ref': "Moody's (Out/2025)"},
-}
+# Ratings: carregados do ratings.json (gerado pelo coletor_ratings.py)
+def load_ratings():
+    """Carrega ratings do arquivo gerado pelo coletor_ratings.py"""
+    try:
+        with open('ratings.json', 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            return data.get('ratings', {})
+    except FileNotFoundError:
+        print("  ⚠️  ratings.json não encontrado. Rode primeiro: python coletor_ratings.py")
+        return {}
+
+RATINGS = load_ratings()
 
 # Bancos que queremos (filtro por nome parcial)
 BANCOS_ALVO = {
@@ -256,7 +230,7 @@ def main():
                     'rating_fitch': rating_data.get('fitch', ''),
                     'rating_sp': rating_data.get('sp', ''),
                     'rating_perspectiva': rating_data.get('perspectiva', ''),
-                    'rating_fonte': rating_data.get('agencia_ref', ''),
+                    'rating_fonte': rating_data.get('fonte', rating_data.get('agencia_ref', '')),
                 }
                 resultados.append(banco)
                 matched.add(keyword)
