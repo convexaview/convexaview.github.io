@@ -25,6 +25,34 @@ IND_BASILEIA = 79664       # Índice de Basileia (decimal, multiplicar por 100)
 IND_IMOBILIZACAO = 79662   # Índice de Imobilização (decimal)
 IND_PL = 141836            # Patrimônio Líquido (R$ mil)
 
+# Ratings de crédito (fontes: Moody's, Fitch, S&P — dados públicos)
+# Atualizado: 2025/2026
+RATINGS = {
+    'Itaú Unibanco':      {'moodys': 'Ba1', 'fitch': 'BB+', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025), Fitch (Mar/2026)"},
+    'Bradesco':           {'moodys': 'Ba1', 'fitch': 'BB+', 'perspectiva': 'Estável', 'agencia_ref': "Moody's (Out/2025), Fitch (Mar/2026)"},
+    'Banco do Brasil':    {'moodys': 'Ba1', 'fitch': 'BB', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025), Fitch (Mar/2026)"},
+    'Santander Brasil':   {'moodys': 'Ba1', 'fitch': 'BB+', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025)"},
+    'Caixa Econômica':    {'moodys': 'Ba1', 'fitch': 'BB', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025)"},
+    'BTG Pactual':        {'moodys': 'Ba1', 'fitch': 'BB+', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025), Fitch (Mar/2026)"},
+    'Safra':              {'moodys': 'Ba1', 'fitch': 'BB+', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025)"},
+    'Nubank':             {'moodys': 'Ba1', 'fitch': 'BB', 'perspectiva': 'Estável', 'agencia_ref': "Moody's (Out/2025), Moody's Local AAA.br (Jan/2026)"},
+    'Inter':              {'moodys': 'Ba2', 'fitch': 'BB-', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025)"},
+    'C6 Bank':            {'moodys': '', 'fitch': 'BB-', 'perspectiva': 'Estável', 'agencia_ref': "Fitch"},
+    'PicPay':             {'moodys': '', 'fitch': 'B+', 'perspectiva': 'Estável', 'agencia_ref': "Fitch"},
+    'Sicredi':            {'moodys': 'Ba1', 'fitch': '', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025)"},
+    'Sicoob':             {'moodys': '', 'fitch': 'BB', 'perspectiva': 'Estável', 'agencia_ref': "Fitch"},
+    'ABC Brasil':         {'moodys': 'Ba1', 'fitch': '', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025)"},
+    'Daycoval':           {'moodys': 'Ba1', 'fitch': '', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025)"},
+    'Banco do Nordeste':  {'moodys': 'Ba1', 'fitch': '', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025)"},
+    'Banco da Amazônia':  {'moodys': 'Ba1', 'fitch': '', 'perspectiva': 'Positiva', 'agencia_ref': "Moody's (Out/2025)"},
+    'BMG':                {'moodys': '', 'fitch': 'B+', 'perspectiva': 'Estável', 'agencia_ref': "Fitch"},
+    'Banrisul':           {'moodys': '', 'fitch': 'BB-', 'perspectiva': 'Estável', 'agencia_ref': "Fitch"},
+    'Sofisa':             {'moodys': '', 'fitch': 'BB-', 'perspectiva': 'Estável', 'agencia_ref': "Fitch"},
+    'Pine':               {'moodys': '', 'fitch': 'B+', 'perspectiva': 'Estável', 'agencia_ref': "Fitch"},
+    'PagBank (PagSeguro)': {'moodys': '', 'fitch': 'BB-', 'perspectiva': 'Estável', 'agencia_ref': "Fitch"},
+    'Votorantim':         {'moodys': 'Ba1', 'fitch': 'BB+', 'perspectiva': 'Estável', 'agencia_ref': "Moody's (Out/2025)"},
+}
+
 # Bancos que queremos (filtro por nome parcial)
 BANCOS_ALVO = {
     'ITAU': {'nome_display': 'Itaú Unibanco', 'tipo_display': 'Banco Múltiplo'},
@@ -162,7 +190,7 @@ def main():
     print("  Baixando indicadores...")
     resp2 = requests.get(
         f'https://www3.bcb.gov.br/ifdata/rest/arquivos?nomeArquivo=ifdata_2025_2030//{ultimo}/dados{ultimo}_1.json',
-        headers={'User-Agent': 'Mozilla/5.0'}, timeout=60
+        headers={'User-Agent': 'Mozilla/5.0'}, timeout=120
     )
     data = resp2.json()
 
@@ -201,6 +229,9 @@ def main():
                 score = calc_score(bas, imob)
                 situacao = get_semaforo(bas)
 
+                # Rating de crédito
+                rating_data = RATINGS.get(config['nome_display'], {})
+
                 banco = {
                     'nome': config['nome_display'],
                     'nome_bcb': nome_bcb,
@@ -210,6 +241,10 @@ def main():
                     'patrimonio_liquido': pl,
                     'score': score,
                     'situacao': situacao,
+                    'rating_moodys': rating_data.get('moodys', ''),
+                    'rating_fitch': rating_data.get('fitch', ''),
+                    'rating_perspectiva': rating_data.get('perspectiva', ''),
+                    'rating_fonte': rating_data.get('agencia_ref', ''),
                 }
                 resultados.append(banco)
                 matched.add(keyword)

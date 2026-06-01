@@ -12,7 +12,11 @@
       "imobilizacao": 0.5,
       "patrimonio_liquido": 0,
       "score": 100,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "Ba1",
+      "rating_fitch": "BB+",
+      "rating_perspectiva": "Estável",
+      "rating_fonte": "Moody's (Out/2025)"
     },
     {
       "nome": "Inter",
@@ -22,7 +26,11 @@
       "imobilizacao": 5.98,
       "patrimonio_liquido": 0,
       "score": 100,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "Ba2",
+      "rating_fitch": "BB-",
+      "rating_perspectiva": "Positiva",
+      "rating_fonte": "Moody's (Out/2025)"
     },
     {
       "nome": "Original",
@@ -32,7 +40,11 @@
       "imobilizacao": 9.91,
       "patrimonio_liquido": 0,
       "score": 100,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "",
+      "rating_fitch": "",
+      "rating_perspectiva": "",
+      "rating_fonte": ""
     },
     {
       "nome": "PagBank (PagSeguro)",
@@ -42,7 +54,11 @@
       "imobilizacao": 0,
       "patrimonio_liquido": 0,
       "score": 100,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "",
+      "rating_fitch": "BB-",
+      "rating_perspectiva": "Estável",
+      "rating_fonte": "Fitch"
     },
     {
       "nome": "Banrisul",
@@ -52,7 +68,11 @@
       "imobilizacao": 0.75,
       "patrimonio_liquido": 0,
       "score": 100,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "",
+      "rating_fitch": "BB-",
+      "rating_perspectiva": "Estável",
+      "rating_fonte": "Fitch"
     },
     {
       "nome": "Sicredi",
@@ -62,7 +82,11 @@
       "imobilizacao": 1.42,
       "patrimonio_liquido": 0,
       "score": 100,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "Ba1",
+      "rating_fitch": "",
+      "rating_perspectiva": "Positiva",
+      "rating_fonte": "Moody's (Out/2025)"
     },
     {
       "nome": "Pan",
@@ -72,7 +96,11 @@
       "imobilizacao": 7.58,
       "patrimonio_liquido": 0,
       "score": 100,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "",
+      "rating_fitch": "",
+      "rating_perspectiva": "",
+      "rating_fonte": ""
     },
     {
       "nome": "Caixa Econômica",
@@ -82,7 +110,11 @@
       "imobilizacao": 9.79,
       "patrimonio_liquido": 0,
       "score": 90,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "Ba1",
+      "rating_fitch": "BB",
+      "rating_perspectiva": "Positiva",
+      "rating_fonte": "Moody's (Out/2025)"
     },
     {
       "nome": "Safra",
@@ -92,7 +124,11 @@
       "imobilizacao": 9.35,
       "patrimonio_liquido": 374012955340.0,
       "score": 90,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "Ba1",
+      "rating_fitch": "BB+",
+      "rating_perspectiva": "Positiva",
+      "rating_fonte": "Moody's (Out/2025)"
     },
     {
       "nome": "Nubank",
@@ -102,7 +138,11 @@
       "imobilizacao": 1.2,
       "patrimonio_liquido": 0,
       "score": 90,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "Ba1",
+      "rating_fitch": "BB",
+      "rating_perspectiva": "Estável",
+      "rating_fonte": "Moody's (Out/2025), Moody's Local AAA.br (Jan/2026)"
     },
     {
       "nome": "Sofisa",
@@ -112,7 +152,11 @@
       "imobilizacao": 8.42,
       "patrimonio_liquido": 0,
       "score": 90,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "",
+      "rating_fitch": "BB-",
+      "rating_perspectiva": "Estável",
+      "rating_fonte": "Fitch"
     },
     {
       "nome": "ABC Brasil",
@@ -122,7 +166,11 @@
       "imobilizacao": 0.49,
       "patrimonio_liquido": 0,
       "score": 90,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "Ba1",
+      "rating_fitch": "",
+      "rating_perspectiva": "Positiva",
+      "rating_fonte": "Moody's (Out/2025)"
     },
     {
       "nome": "Sicoob",
@@ -132,7 +180,11 @@
       "imobilizacao": 10.97,
       "patrimonio_liquido": 0,
       "score": 90,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "",
+      "rating_fitch": "BB",
+      "rating_perspectiva": "Estável",
+      "rating_fonte": "Fitch"
     },
     {
       "nome": "Itaú Unibanco",
@@ -142,7 +194,11 @@
       "imobilizacao": 19.43,
       "patrimonio_liquido": 366438360790.0,
       "score": 80,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "Ba1",
+      "rating_fitch": "BB+",
+      "rating_perspectiva": "Positiva",
+      "rating_fonte": "Moody's (Out/2025), Fitch (Mar/2026)"
     },
     {
       "nome": "Banco do Brasil",
@@ -152,7 +208,11 @@
       "imobilizacao": 19.82,
       "patrimonio_liquido": 119701064540.0,
       "score": 80,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "Ba1",
+      "rating_fitch": "BB",
+      "rating_perspectiva": "Positiva",
+      "rating_fonte": "Moody's (Out/2025), Fitch (Mar/2026)"
     },
     {
       "nome": "Santander Brasil",
@@ -162,7 +222,11 @@
       "imobilizacao": 14.94,
       "patrimonio_liquido": 391907775700.0,
       "score": 80,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "Ba1",
+      "rating_fitch": "BB+",
+      "rating_perspectiva": "Positiva",
+      "rating_fonte": "Moody's (Out/2025)"
     },
     {
       "nome": "Neon",
@@ -172,7 +236,11 @@
       "imobilizacao": 0,
       "patrimonio_liquido": 0,
       "score": 80,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "",
+      "rating_fitch": "",
+      "rating_perspectiva": "",
+      "rating_fonte": ""
     },
     {
       "nome": "Pine",
@@ -182,7 +250,11 @@
       "imobilizacao": 7.81,
       "patrimonio_liquido": 0,
       "score": 80,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "",
+      "rating_fitch": "B+",
+      "rating_perspectiva": "Estável",
+      "rating_fonte": "Fitch"
     },
     {
       "nome": "Banco do Nordeste",
@@ -192,7 +264,11 @@
       "imobilizacao": 2.15,
       "patrimonio_liquido": 0,
       "score": 80,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "Ba1",
+      "rating_fitch": "",
+      "rating_perspectiva": "Positiva",
+      "rating_fonte": "Moody's (Out/2025)"
     },
     {
       "nome": "Banco da Amazônia",
@@ -202,7 +278,11 @@
       "imobilizacao": 2.57,
       "patrimonio_liquido": 0,
       "score": 80,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "Ba1",
+      "rating_fitch": "",
+      "rating_perspectiva": "Positiva",
+      "rating_fonte": "Moody's (Out/2025)"
     },
     {
       "nome": "Bradesco",
@@ -212,7 +292,11 @@
       "imobilizacao": 26.91,
       "patrimonio_liquido": 628590906390.0,
       "score": 70,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "Ba1",
+      "rating_fitch": "BB+",
+      "rating_perspectiva": "Estável",
+      "rating_fonte": "Moody's (Out/2025), Fitch (Mar/2026)"
     },
     {
       "nome": "Daycoval",
@@ -222,7 +306,11 @@
       "imobilizacao": 17.37,
       "patrimonio_liquido": 349828153120.0,
       "score": 70,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "Ba1",
+      "rating_fitch": "",
+      "rating_perspectiva": "Positiva",
+      "rating_fonte": "Moody's (Out/2025)"
     },
     {
       "nome": "C6 Bank",
@@ -232,7 +320,11 @@
       "imobilizacao": 13.7,
       "patrimonio_liquido": 0,
       "score": 70,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "",
+      "rating_fitch": "BB-",
+      "rating_perspectiva": "Estável",
+      "rating_fonte": "Fitch"
     },
     {
       "nome": "Mercantil do Brasil",
@@ -242,7 +334,11 @@
       "imobilizacao": 19.32,
       "patrimonio_liquido": 0,
       "score": 70,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "",
+      "rating_fitch": "",
+      "rating_perspectiva": "",
+      "rating_fonte": ""
     },
     {
       "nome": "Rodobens",
@@ -252,7 +348,11 @@
       "imobilizacao": 28.31,
       "patrimonio_liquido": 1449760400.0,
       "score": 70,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "",
+      "rating_fitch": "",
+      "rating_perspectiva": "",
+      "rating_fonte": ""
     },
     {
       "nome": "PicPay",
@@ -262,7 +362,11 @@
       "imobilizacao": 0,
       "patrimonio_liquido": 0,
       "score": 65,
-      "situacao": "amarelo"
+      "situacao": "amarelo",
+      "rating_moodys": "",
+      "rating_fitch": "B+",
+      "rating_perspectiva": "Estável",
+      "rating_fonte": "Fitch"
     },
     {
       "nome": "BTG Pactual",
@@ -272,7 +376,11 @@
       "imobilizacao": 31.95,
       "patrimonio_liquido": 26466004700.0,
       "score": 60,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "Ba1",
+      "rating_fitch": "BB+",
+      "rating_perspectiva": "Positiva",
+      "rating_fonte": "Moody's (Out/2025), Fitch (Mar/2026)"
     },
     {
       "nome": "Banestes",
@@ -282,7 +390,11 @@
       "imobilizacao": 25.07,
       "patrimonio_liquido": 52339810.0,
       "score": 60,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "",
+      "rating_fitch": "",
+      "rating_perspectiva": "",
+      "rating_fonte": ""
     },
     {
       "nome": "BMG",
@@ -292,7 +404,11 @@
       "imobilizacao": 28.97,
       "patrimonio_liquido": 0,
       "score": 60,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "",
+      "rating_fitch": "B+",
+      "rating_perspectiva": "Estável",
+      "rating_fonte": "Fitch"
     },
     {
       "nome": "Agibank",
@@ -302,7 +418,11 @@
       "imobilizacao": 43.9,
       "patrimonio_liquido": 0,
       "score": 50,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "",
+      "rating_fitch": "",
+      "rating_perspectiva": "",
+      "rating_fonte": ""
     },
     {
       "nome": "BS2",
@@ -312,7 +432,11 @@
       "imobilizacao": 33.71,
       "patrimonio_liquido": 0,
       "score": 50,
-      "situacao": "verde"
+      "situacao": "verde",
+      "rating_moodys": "",
+      "rating_fitch": "",
+      "rating_perspectiva": "",
+      "rating_fonte": ""
     }
   ]
 }
