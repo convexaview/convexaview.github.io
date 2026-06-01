@@ -242,6 +242,8 @@ def calcular_score(emp):
         elif de <= 5:
             score += 3
         # acima de 5 = 0 pontos
+    else:
+        score += 12  # dado ausente = pontuação neutra
 
     # Liquidez Corrente (20 pontos)
     lc = emp.get('liq_corrente')
@@ -255,6 +257,8 @@ def calcular_score(emp):
         elif lc >= 0.8:
             score += 5
         # abaixo de 0.8 = 0
+    else:
+        score += 8  # dado ausente = pontuação neutra
 
     # Cobertura de Juros (20 pontos)
     cj = emp.get('cob_juros')
@@ -268,6 +272,8 @@ def calcular_score(emp):
         elif cj >= 1:
             score += 5
         # abaixo de 1 = 0
+    else:
+        score += 8  # dado ausente = pontuação neutra
 
     # Margem EBITDA (15 pontos)
     me = emp.get('margem_ebitda')
@@ -281,6 +287,8 @@ def calcular_score(emp):
         elif me >= 5:
             score += 4
         # abaixo de 5% = 0
+    else:
+        score += 6  # dado ausente = pontuação neutra
 
     # Free Cash Flow positivo (15 pontos)
     fcf = emp.get('fcf', 0)
@@ -288,6 +296,8 @@ def calcular_score(emp):
         score += 15
     elif fcf and fcf > -1e8:
         score += 5
+    elif not fcf:
+        score += 6  # dado ausente = pontuação neutra
 
     return min(score, 100)
 
