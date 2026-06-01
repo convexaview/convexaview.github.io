@@ -183,12 +183,39 @@
       "tickers": []
     },
     {
+      "title": "Presidente e candidato de esquerda questionam resultado da eleição da Colômbia",
+      "summary": "Ivan Cepeda disse que esperará revisão de dados antes de comentar os números do 1º turno, em que ele ficou em segundo lugar",
+      "source": "Exame",
+      "url": "https://exame.com/mundo/presidente-e-candidato-de-esquerda-questionam-resultado-da-eleicao-da-colombia/",
+      "time": "2026-05-31T23:42:52Z",
+      "cat": "economia",
+      "tickers": []
+    },
+    {
       "title": "Ibovespa e dólar hoje: Trump adia acordo com Irã pré-semana de emprego nos EUA",
       "summary": "",
       "source": "Investing.com",
       "url": "https://br.investing.com/news/stock-market-news/ibovespa-e-dolar-hoje-trump-adia-acordo-com-ira-presemana-de-emprego-nos-eua-1956852",
       "time": "2026-06-01T10:00:00Z",
       "cat": "economia",
+      "tickers": []
+    },
+    {
+      "title": "Ações asiáticas sobem com otimismo em IA; KOSPI atinge recorde histórico",
+      "summary": "",
+      "source": "Investing.com",
+      "url": "https://br.investing.com/news/stock-market-news/acoes-asiaticas-sobem-com-otimismo-em-ia-kospi-atinge-recorde-historico-1957430",
+      "time": "2026-06-01T03:35:42Z",
+      "cat": "internacional",
+      "tickers": []
+    },
+    {
+      "title": "Ações da LG disparam para máximas históricas com especulações sobre parceria com a Nvidia",
+      "summary": "",
+      "source": "Investing.com",
+      "url": "https://br.investing.com/news/stock-market-news/acoes-da-lg-disparam-para-maximas-historicas-com-especulacoes-sobre-parceria-com-a-nvidia-1957426",
+      "time": "2026-06-01T02:39:39Z",
+      "cat": "internacional",
       "tickers": []
     },
     {
@@ -208,16 +235,7 @@
       "time": "2026-05-31T21:20:20Z",
       "cat": "internacional",
       "tickers": []
-    },
-    {
-      "title": "Nvidia e AMD enfrentam novas restrições de exportação para subsidiárias chinesas",
-      "summary": "",
-      "source": "Investing.com",
-      "url": "https://br.investing.com/news/stock-market-news/nvidia-e-amd-enfrentam-novas-restricoes-de-exportacao-para-subsidiarias-chinesas-1957384",
-      "time": "2026-05-31T20:19:21Z",
-      "cat": "internacional",
-      "tickers": []
     }
   ],
-  "atualizado_em": "01/06/2026 02:23"
+  "atualizado_em": "01/06/2026 04:01"
 }
