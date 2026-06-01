@@ -1296,6 +1296,56 @@
   }
 
   .raiox-table th:hover { color: var(--text); }
+  /* Tooltip info nos cabeçalhos */
+  .th-info {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.08);
+    color: var(--text-muted);
+    font-size: 9px;
+    font-weight: 700;
+    font-style: normal;
+    cursor: help;
+    position: relative;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .th-info:hover { background: rgba(0,0,0,0.15); color: var(--text); }
+  .th-info .tip {
+    display: none;
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-dark);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 400;
+    padding: 8px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    line-height: 1.5;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .th-info .tip::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid var(--bg-dark);
+  }
+  .th-info:hover .tip { display: block; }
+
   .th-arrow {
     font-size: 10px;
     opacity: 0.3;
@@ -1677,10 +1727,10 @@
         <thead>
           <tr>
             <th style="text-align:left;cursor:pointer;" onclick="sortCorp('nome')">Empresa <span class="th-corp-arrow" data-col="nome">▼</span></th>
-            <th style="cursor:pointer;" onclick="sortCorp('div_ebitda')">Dív/EBITDA <span class="th-corp-arrow" data-col="div_ebitda">▼</span></th>
-            <th style="cursor:pointer;" onclick="sortCorp('liq_corrente')">Liquidez <span class="th-corp-arrow" data-col="liq_corrente">▼</span></th>
-            <th style="cursor:pointer;" onclick="sortCorp('cob_juros')">Cob. Juros <span class="th-corp-arrow" data-col="cob_juros">▼</span></th>
-            <th style="cursor:pointer;" onclick="sortCorp('score')">Score <span class="th-corp-arrow active" data-col="score">▲</span></th>
+            <th style="cursor:pointer;" onclick="sortCorp('div_ebitda')">Dív/EBITDA <span class="th-info" onclick="event.stopPropagation()">i<span class="tip">Dívida Líquida / EBITDA<br>Abaixo de 2x = saudável<br>2x a 3x = aceitável<br>Acima de 3x = alavancada<br>Acima de 5x = risco alto</span></span> <span class="th-corp-arrow" data-col="div_ebitda">▼</span></th>
+            <th style="cursor:pointer;" onclick="sortCorp('liq_corrente')">Liquidez <span class="th-info" onclick="event.stopPropagation()">i<span class="tip">Ativo Circulante / Passivo Circulante<br>Acima de 1.5 = confortável<br>Entre 1.0 e 1.5 = aceitável<br>Abaixo de 1.0 = não paga as contas</span></span> <span class="th-corp-arrow" data-col="liq_corrente">▼</span></th>
+            <th style="cursor:pointer;" onclick="sortCorp('cob_juros')">Cob. Juros <span class="th-info" onclick="event.stopPropagation()">i<span class="tip">Lucro Operacional / Despesa com Juros<br>Acima de 3x = paga juros tranquilo<br>Entre 1x e 3x = apertado<br>Abaixo de 1x = lucro não cobre os juros</span></span> <span class="th-corp-arrow" data-col="cob_juros">▼</span></th>
+            <th style="cursor:pointer;" onclick="sortCorp('score')">Score <span class="th-info" onclick="event.stopPropagation()">i<span class="tip">Nota de saúde financeira (0-100)<br>Combina: dívida, liquidez, juros,<br>margem operacional e geração de caixa<br>Acima de 65 = saudável<br>40 a 65 = atenção<br>Abaixo de 40 = risco</span></span> <span class="th-corp-arrow active" data-col="score">▲</span></th>
             <th>Situação</th>
           </tr>
         </thead>
